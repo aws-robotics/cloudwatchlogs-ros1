@@ -1,0 +1,11 @@
+<launch>
+    <!-- If a node_name argument is provided by the caller then we will set the metric node's name to that value -->
+    <arg name="node_name" default="cloudwatch_logger" />
+    <!-- If a config file argument is provided by the caller then we will load it into the node's namespace -->
+    <arg name="config_file" default="" />
+        
+    <node name="$(arg node_name)" pkg="cloudwatch_logger" type="cloudwatch_logger">
+        <!-- If the caller specified a config file then load it here. -->
+        <rosparam if="$(eval config_file!='')" command="load" file="$(arg config_file)"/>      
+    </node>
+</launch>

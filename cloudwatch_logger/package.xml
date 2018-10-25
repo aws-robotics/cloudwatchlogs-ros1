@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cloudwatch_logger</name>
+  <version>1.0.0</version>
+  <description>CloudWatch Logger node for publishing logs to AWS CloudWatch Logs</description>
+
+  <url>http://wiki.ros.org/cloudwatch_logger</url>
+
+  <author email="ros-contributions@amazon.com">AWS RoboMaker</author>
+  <maintainer email="ros-contributions@amazon.com">AWS RoboMaker</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>cloudwatch_logs_common</build_depend>
+  <build_depend>aws_common</build_depend>
+  <build_depend>aws_ros1_common</build_depend>
+  <build_depend>roscpp</build_depend>
+
+  <build_export_depend>cloudwatch_logs_common</build_export_depend>
+  <build_export_depend>aws_common</build_export_depend>
+  <build_export_depend>aws_ros1_common</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+
+  <exec_depend>cloudwatch_logs_common</exec_depend>
+  <exec_depend>aws_common</exec_depend>
+  <exec_depend>aws_ros1_common</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+</package>
