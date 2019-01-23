@@ -8,7 +8,6 @@ notifications:
     on_failure: always
     recipients:
       - ros-contributions@amazon.com
-      - travis-build@platform-notifications.robomaker.aws.a2z.com
 env:
   global:
     - UPSTREAM_WORKSPACE=file
