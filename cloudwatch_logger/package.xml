@@ -13,18 +13,18 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>cloudwatch_logs_common</build_depend>
-  <build_depend>aws_common</build_depend>
-  <build_depend>aws_ros1_common</build_depend>
+  <build_depend version_lt='2.0.0'>cloudwatch_logs_common</build_depend>
+  <build_depend version_lt='2.0.0'>aws_common</build_depend>
+  <build_depend version_lt='2.0.0'>aws_ros1_common</build_depend>
   <build_depend>roscpp</build_depend>
 
-  <build_export_depend>cloudwatch_logs_common</build_export_depend>
-  <build_export_depend>aws_common</build_export_depend>
-  <build_export_depend>aws_ros1_common</build_export_depend>
+  <build_export_depend version_lt='2.0.0'>cloudwatch_logs_common</build_export_depend>
+  <build_export_depend version_lt='2.0.0'>aws_common</build_export_depend>
+  <build_export_depend version_lt='2.0.0'>aws_ros1_common</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
 
-  <exec_depend>cloudwatch_logs_common</exec_depend>
-  <exec_depend>aws_common</exec_depend>
-  <exec_depend>aws_ros1_common</exec_depend>
+  <exec_depend version_lt='2.0.0'>cloudwatch_logs_common</exec_depend>
+  <exec_depend version_lt='2.0.0'>aws_common</exec_depend>
+  <exec_depend version_lt='2.0.0'>aws_ros1_common</exec_depend>
   <exec_depend>roscpp</exec_depend>
 </package>

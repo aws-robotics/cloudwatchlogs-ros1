@@ -10,8 +10,9 @@ notifications:
       - ros-contributions@amazon.com
 env:
   global:
-    - UPSTREAM_WORKSPACE=file
-    - ROSINSTALL_FILENAME=.rosinstall.master
+    # Uncomment to build  dependencies from source instead of rosdep
+    # - UPSTREAM_WORKSPACE=file
+    # - ROSINSTALL_FILENAME=.rosinstall.master
   matrix:
     - ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
     - ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu
