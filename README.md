@@ -23,7 +23,6 @@ The source code is released under an [Apache 2.0].
 
 ### Supported ROS Distributions
 - Kinetic
-- Lunar
 - Melodic
 
 ### Build status
@@ -44,26 +43,34 @@ This node will require the following AWS account IAM role permissions:
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
 
+### Binaries
+On Ubuntu you can install the latest version of this package using the following command
+
+        sudo apt-get update
+        sudo apt-get install -y ros-kinetic-cloudwatch-logger
+
 ### Building from Source
-Create a ROS workspace and a source directory
+
+To build from source you'll need to create a new workspace, clone and checkout the latest release branch of this repository, install all the dependencies, and compile. If you need the latest development features you can clone from the `master` branch instead of the latest release branch. While we guarantee the release branches are stable, __the `master` should be considered to have an unstable build__ due to ongoing development. 
+
+- Create a ROS workspace and a source directory
 
     mkdir -p ~/ros-workspace/src
 
-To build from source, clone the latest version from master branch and compile the package.
+- Clone the package into the source directory . 
 
-- Clone the package into the source directory
+_Note: Replace __`{MAJOR.VERSION}`__ below with the latest major version number to get the latest release branch._
 
         cd ~/ros-workspace/src
-        git clone https://github.com/aws-robotics/utils-common.git
-        git clone https://github.com/aws-robotics/utils-ros1.git
-        git clone https://github.com/aws-robotics/monitoringmessages-ros1.git
-        git clone https://github.com/aws-robotics/cloudwatch-common.git
-        git clone https://github.com/aws-robotics/cloudwatchlogs-ros1.git
+        git clone https://github.com/aws-robotics/cloudwatchlogs-ros1.git -b release-v{MAJOR.VERSION}
 
 - Install dependencies
 
-        cd ~/ros-workspace && sudo apt-get update
+        cd ~/ros-workspace 
+        sudo apt-get update && rosdep update
         rosdep install --from-paths src --ignore-src -r -y
+        
+_Note: If building the master branch instead of a release branch you may need to also checkout and build the master branches of the packages this package depends on._
 
 - Build the packages
 
