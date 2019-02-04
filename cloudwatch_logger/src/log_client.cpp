@@ -26,6 +26,9 @@
 
 #include <iostream>
 
+using namespace Aws::Client;
+
+
 constexpr char kNodeName[] = "cloudwatch_logger";
 constexpr int kNodeSubQueueSize = 100;
 constexpr char kNodeRosoutAggregatedTopicName[] = "rosout_agg";
@@ -43,12 +46,13 @@ constexpr int8_t kNodeMinLogVerbosityDefaultValue = rosgraph_msgs::Log::DEBUG;
 constexpr double kNodePublishFrequencyDefaultValue = 5.0;
 constexpr bool kNodeSubscribeToRosoutDefaultValue = true;
 
+
 Aws::AwsError ReadPublishFrequency(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::shared_ptr<ParameterReaderInterface> parameter_reader,
   double & publish_frequency)
 {
   Aws::AwsError ret =
-    parameter_reader->ReadDouble(kNodeParamPublishFrequencyKey, publish_frequency);
+    parameter_reader->ReadParam(ParameterPath(kNodeParamPublishFrequencyKey), publish_frequency);
   if (ret == Aws::AWS_ERR_NOT_FOUND) {
     publish_frequency = kNodePublishFrequencyDefaultValue;
     AWS_LOGSTREAM_WARN(__func__,
@@ -60,10 +64,10 @@ Aws::AwsError ReadPublishFrequency(
   return ret;
 }
 
-Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+Aws::AwsError ReadLogGroup(std::shared_ptr<ParameterReaderInterface> parameter_reader,
                            std::string & log_group)
 {
-  Aws::AwsError ret = parameter_reader->ReadStdString(kNodeParamLogGroupNameKey, log_group);
+  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogGroupNameKey), log_group);
   if (ret == Aws::AWS_ERR_NOT_FOUND) {
     log_group = kNodeLogGroupNameDefaultValue;
     AWS_LOGSTREAM_WARN(__func__,
@@ -75,10 +79,10 @@ Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface
   return ret;
 }
 
-Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+Aws::AwsError ReadLogStream(std::shared_ptr<ParameterReaderInterface> parameter_reader,
                             std::string & log_stream)
 {
-  Aws::AwsError ret = parameter_reader->ReadStdString(kNodeParamLogStreamNameKey, log_stream);
+  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogStreamNameKey), log_stream);
   if (ret == Aws::AWS_ERR_NOT_FOUND) {
     log_stream = kNodeLogStreamNameDefaultValue;
     AWS_LOGSTREAM_WARN(__func__,
@@ -91,11 +95,11 @@ Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterfac
 }
 
 Aws::AwsError ReadSubscribeToRosout(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::shared_ptr<ParameterReaderInterface> parameter_reader,
   bool & subscribe_to_rosout)
 {
   Aws::AwsError ret =
-    parameter_reader->ReadBool(kNodeParamSubscribeToRosoutKey, subscribe_to_rosout);
+    parameter_reader->ReadParam(ParameterPath(kNodeParamSubscribeToRosoutKey), subscribe_to_rosout);
   if (ret == Aws::AWS_ERR_NOT_FOUND) {
     subscribe_to_rosout = kNodeSubscribeToRosoutDefaultValue;
     AWS_LOGSTREAM_WARN(
@@ -110,14 +114,14 @@ Aws::AwsError ReadSubscribeToRosout(
 }
 
 Aws::AwsError ReadMinLogVerbosity(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::shared_ptr<ParameterReaderInterface> parameter_reader,
   int8_t & min_log_verbosity)
 {
   min_log_verbosity = kNodeMinLogVerbosityDefaultValue;
 
   std::string specified_verbosity;
   Aws::AwsError ret =
-    parameter_reader->ReadStdString(kNodeParamMinLogVerbosityKey, specified_verbosity);
+    parameter_reader->ReadParam(ParameterPath(kNodeParamMinLogVerbosityKey), specified_verbosity);
   if (ret == Aws::AWS_ERR_NOT_FOUND) {
     AWS_LOGSTREAM_WARN(__func__, "Log verbosity configuration not found, setting to default value: "
                                    << kNodeMinLogVerbosityDefaultValue);
@@ -148,12 +152,12 @@ Aws::AwsError ReadMinLogVerbosity(
 }
 
 Aws::AwsError ReadSubscriberList(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::shared_ptr<ParameterReaderInterface> parameter_reader,
   std::vector<ros::Subscriber> & subscriptions, ros::NodeHandle & nh, bool & subscribe_to_rosout,
   boost::function<void(const rosgraph_msgs::Log::ConstPtr &)> callback)
 {
   std::vector<std::string> topics;
-  Aws::AwsError ret = parameter_reader->ReadList(kNodeParamLogTopicsListKey, topics);
+  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogTopicsListKey), topics);
 
   for (auto it = topics.begin(); it != topics.end(); ++it) {
     ros::Subscriber sub = nh.subscribe(*it, kNodeSubQueueSize, callback);
@@ -185,8 +189,8 @@ int main(int argc, char ** argv)
 
   ros::NodeHandle nh;
 
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader =
-    std::make_shared<Aws::Client::Ros1NodeParameterReader>();
+  std::shared_ptr<ParameterReaderInterface> parameter_reader =
+    std::make_shared<Ros1NodeParameterReader>();
 
   // checking configurations to set values or set to default values;
   ReadPublishFrequency(parameter_reader, publish_frequency);
@@ -196,8 +200,8 @@ int main(int argc, char ** argv)
   ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
 
   // configure aws settings
-  Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);
-  Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
+  ClientConfigurationProvider client_config_provider(parameter_reader);
+  ClientConfiguration config = client_config_provider.GetClientConfiguration();
   Aws::SDKOptions sdk_options;
 
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity);
