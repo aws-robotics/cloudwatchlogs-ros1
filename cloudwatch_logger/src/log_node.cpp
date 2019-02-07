@@ -36,10 +36,10 @@ LogNode::LogNode(int8_t min_log_severity)
 LogNode::~LogNode() { this->log_manager_ = nullptr; }
 
 void LogNode::Initialize(const std::string & log_group, const std::string & log_stream,
-                         Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options)
+                         const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
+                         std::shared_ptr<LogManagerFactory> factory)
 {
-  LogManagerFactory factory;
-  this->log_manager_ = factory.CreateLogManager(log_group, log_stream, config, sdk_options);
+  this->log_manager_ = factory->CreateLogManager(log_group, log_stream, config, sdk_options);
 }
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)

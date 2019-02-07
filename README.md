@@ -120,21 +120,21 @@ An example configuration file called `sample_configuration.yaml` is provided. Wh
 | log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account |
 | log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed |
 | topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] |
-| min_log_severity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL |
+| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL |
 | aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. |
 
 
 ## Performance and Benchmark Results
 We evaluated the performance of this node by runnning the followning scenario on a Raspberry Pi 3 Model B:
-- Launch a baseline graph containing the talker and listener nodes from the [roscpp_tutorials package](https://wiki.ros.org/roscpp_tutorials), plus two additional nodes that collect CPU and memory usage statistics. Allow the nodes to run for 60 seconds. 
-- Launch the Amazon CloudWatch Logs node using the launch file `example.launch` as described above. Allow the nodes to run for 180 seconds. 
-- Terminate the Amazon CloudWatch Logs node, and allow the remaining nodes to run for 60 seconds. 
+- Launch a baseline graph containing the talker and listener nodes from the [roscpp_tutorials package](https://wiki.ros.org/roscpp_tutorials), plus two additional nodes that collect CPU and memory usage statistics. Allow the nodes to run for 60 seconds.
+- Launch the Amazon CloudWatch Logs node using the launch file `example.launch` as described above. Allow the nodes to run for 180 seconds.
+- Terminate the Amazon CloudWatch Logs node, and allow the remaining nodes to run for 60 seconds.
 
-The following graph shows the CPU usage during that scenario. The 1 minute average CPU usage starts at 9.25% during the launch of the baseline graph, and stabilizes at 4.5%. When we launch the `cloudwatch_logger` node around second 60 the 1 minute average CPU increases up to a peak of 9.5%. After that initial peak, the CPU lowers to around 5% while the `cloudwatch_logger` node keeps sending the messages sent by the talker node to the AWS CloudWatch Logs service. 
+The following graph shows the CPU usage during that scenario. The 1 minute average CPU usage starts at 9.25% during the launch of the baseline graph, and stabilizes at 4.5%. When we launch the `cloudwatch_logger` node around second 60 the 1 minute average CPU increases up to a peak of 9.5%. After that initial peak, the CPU lowers to around 5% while the `cloudwatch_logger` node keeps sending the messages sent by the talker node to the AWS CloudWatch Logs service.
 
 ![cpu](wiki/images/cpu.svg)
 
-The following graph shows the memory usage during that scenario. We start with a memory usage of 368 MB that increases to a peak of 412 MB (+11.96%) when the `cloudwatch_logger` node starts running, and stabilizes to 394 (+7%) while the node keeps running. The memory usage goes back to 368 MB after stopping the node. 
+The following graph shows the memory usage during that scenario. We start with a memory usage of 368 MB that increases to a peak of 412 MB (+11.96%) when the `cloudwatch_logger` node starts running, and stabilizes to 394 (+7%) while the node keeps running. The memory usage goes back to 368 MB after stopping the node.
 
 ![memory](wiki/images/memory.svg)
 
