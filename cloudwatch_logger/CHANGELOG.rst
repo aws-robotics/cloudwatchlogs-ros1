@@ -2,8 +2,8 @@
 Changelog for package cloudwatch_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.0 (2019-03-20)
+------------------
 * Add unit tests for cloudwatch_logger node
   - Split log_client.cpp into log_node_param_helper.cpp for
   fetching parameters, and main.cpp for the entry point
