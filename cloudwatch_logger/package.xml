@@ -27,4 +27,6 @@
   <exec_depend>aws_common</exec_depend>
   <exec_depend>aws_ros1_common</exec_depend>
   <exec_depend>roscpp</exec_depend>
+  
+  <test_depend>rostest</test_depend>
 </package>
