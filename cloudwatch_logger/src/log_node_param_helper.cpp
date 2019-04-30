@@ -29,8 +29,7 @@ Aws::AwsError ReadPublishFrequency(
 {
   Aws::AwsError ret =
     parameter_reader->ReadParam(ParameterPath(kNodeParamPublishFrequencyKey), publish_frequency);
-  switch (ret)
-  {
+  switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       publish_frequency = kNodePublishFrequencyDefaultValue;
       AWS_LOGSTREAM_WARN(__func__,
@@ -54,8 +53,7 @@ Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface
                            std::string & log_group)
 {
   Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogGroupNameKey), log_group);
-  switch (ret)
-  {
+  switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       log_group = kNodeLogGroupNameDefaultValue;
       AWS_LOGSTREAM_WARN(__func__,
@@ -78,8 +76,7 @@ Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterfac
                             std::string & log_stream)
 {
   Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogStreamNameKey), log_stream);
-  switch (ret)
-  {
+  switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       log_stream = kNodeLogStreamNameDefaultValue;
       AWS_LOGSTREAM_WARN(__func__,
@@ -104,8 +101,7 @@ Aws::AwsError ReadSubscribeToRosout(
 {
   Aws::AwsError ret =
     parameter_reader->ReadParam(ParameterPath(kNodeParamSubscribeToRosoutKey), subscribe_to_rosout);
-  switch (ret)
-  {
+  switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       subscribe_to_rosout = kNodeSubscribeToRosoutDefaultValue;
       AWS_LOGSTREAM_WARN(
@@ -137,8 +133,7 @@ Aws::AwsError ReadMinLogVerbosity(
   std::string specified_verbosity;
   Aws::AwsError ret =
     parameter_reader->ReadParam(ParameterPath(kNodeParamMinLogVerbosityKey), specified_verbosity);
-  switch (ret)
-  {
+  switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       AWS_LOGSTREAM_WARN(__func__, "Log verbosity configuration not found, setting to default value: "
                                    << kNodeMinLogVerbosityDefaultValue);
@@ -184,8 +179,7 @@ Aws::AwsError ReadSubscriberList(
   std::vector<std::string> topics;
   Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamLogTopicsListKey), topics);
 
-  for (const std::string& topic : topics)
-  {
+  for (const std::string& topic : topics) {
     ros::Subscriber sub = nh.subscribe(topic, kNodeSubQueueSize, callback);
     AWS_LOGSTREAM_INFO(__func__, "Subscribing to topic: " << topic);
     subscriptions.push_back(sub);
@@ -198,6 +192,27 @@ Aws::AwsError ReadSubscriberList(
   return ret;
 }
 
+Aws::AwsError ReadIgnoreNodesSet(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::unordered_set<std::string> & ignore_nodes)
+{
+  std::vector<std::string> ignore_list;
+  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamIgnoreNodesKey), ignore_list);
+  switch (ret) {
+    case Aws::AwsError::AWS_ERR_NOT_FOUND:
+      break;
+    case Aws::AwsError::AWS_ERR_OK:
+      for (const std::string & node_name : ignore_list) {
+        ignore_nodes.emplace(node_name);
+      }
+      break;
+    default:
+      AWS_LOGSTREAM_ERROR(__func__, 
+        "Error " << ret << " retrieving retrieving list of nodes to ignore.");
+  }
+  
+  return ret;
+}
 
 }  // namespace Utils
 }  // namespace CloudWatchLogs

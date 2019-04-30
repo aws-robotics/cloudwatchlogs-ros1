@@ -23,6 +23,7 @@
 #include <cloudwatch_logs_common/log_publisher.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
+#include <unordered_set>
 
 namespace Aws {
 namespace CloudWatchLogs {
@@ -36,8 +37,9 @@ public:
    *
    * @param min_log_severity the minimum log severity level defined in the configuration file
    *                         logs with severity level equal or above get sent to CloudWatch Logs
+   * @param ignore_nodes The set of node names to ignore logs from
    */
-  explicit LogNode(int8_t min_log_severity);
+  explicit LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes);
 
   /**
    *  @brief Tears down a AWSCloudWatchLogNode object
@@ -77,6 +79,7 @@ private:
   const std::string FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_msg);
   std::shared_ptr<Aws::CloudWatchLogs::LogManager> log_manager_;
   int8_t min_log_severity_;
+  std::unordered_set<std::string> ignore_nodes_;
 };
 
 }  // namespace Utils

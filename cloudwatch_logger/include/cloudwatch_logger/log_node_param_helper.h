@@ -19,6 +19,7 @@
 #include <aws_common/sdk_utils/parameter_reader.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
+#include <unordered_set>
 
 namespace Aws {
 namespace CloudWatchLogs {
@@ -33,6 +34,7 @@ constexpr char kNodeParamSubscribeToRosoutKey[] = "sub_to_rosout";
 constexpr char kNodeParamLogGroupNameKey[] = "log_group_name";
 constexpr char kNodeParamLogTopicsListKey[] = "topics";
 constexpr char kNodeParamMinLogVerbosityKey[] = "min_log_verbosity";
+constexpr char kNodeParamIgnoreNodesKey[] = "ignore_nodes";
 
 constexpr char kNodeLogGroupNameDefaultValue[] = "ros_log_group";
 constexpr char kNodeLogStreamNameDefaultValue[] = "ros_log_stream";
@@ -117,6 +119,18 @@ Aws::AwsError ReadSubscriberList(
   boost::function<void(const rosgraph_msgs::Log::ConstPtr &)> callback,
   ros::NodeHandle & nh,
   std::vector<ros::Subscriber> & subscriptions);
+  
+/**
+ * Fetch the set of node names to ignore incoming logs from. 
+ * 
+ * @param parameter_reader to retrieve the parameters from.
+ * @param ignore_nodes all node names to ignore logs from are added here.
+ * @return an error code that indicates whether the parameter was read successfully or not, 
+ * as returned by \p parameter_reader
+ */
+Aws::AwsError ReadIgnoreNodesSet(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  std::unordered_set<std::string> & ignore_nodes);
 
 }  // namespace Utils
 }  // namespace CloudWatchLogs
