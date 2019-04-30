@@ -198,9 +198,17 @@ Aws::AwsError ReadIgnoreNodesSet(
 {
   std::vector<std::string> ignore_list;
   Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(kNodeParamIgnoreNodesKey), ignore_list);
-  
-  for (const std::string & node_name : ignore_list) {
-    ignore_nodes.emplace(node_name);
+  switch (ret) {
+    case Aws::AwsError::AWS_ERR_NOT_FOUND:
+      break;
+    case Aws::AwsError::AWS_ERR_OK:
+      for (const std::string & node_name : ignore_list) {
+        ignore_nodes.emplace(node_name);
+      }
+      break;
+    default:
+      AWS_LOGSTREAM_ERROR(__func__, 
+        "Error " << ret << " retrieving retrieving list of nodes to ignore.");
   }
   
   return ret;
