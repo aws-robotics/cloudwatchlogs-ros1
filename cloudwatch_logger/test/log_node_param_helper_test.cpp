@@ -28,6 +28,7 @@ using ::testing::InSequence;
 using ::testing::SetArgReferee;
 using ::testing::DoAll;
 using ::testing::Return;
+using ::testing::Invoke;
 using Aws::AwsError;
 
 class ParameterReaderMock : public ParameterReaderInterface 
@@ -249,6 +250,39 @@ TEST_F(LogNodeParamHelperFixture, TestReadReadMinLogVerbosity)
     param = rosgraph_msgs::Log::FATAL + 1 ;
     EXPECT_EQ(AwsError::AWS_ERR_PARAM, ReadMinLogVerbosity(param_reader_, param));
     EXPECT_EQ(kNodeMinLogVerbosityDefaultValue, param);
+}
+
+AwsError MockReadParamAddStringToList(const ParameterPath & param_path, std::vector<std::string> & out)
+{
+  out.emplace_back("String1");
+  return AwsError::AWS_ERR_OK;
+}
+
+TEST_F(LogNodeParamHelperFixture, TestReadIgnoreNodesSet)
+{
+
+    {
+      InSequence read_param_seq;
+
+      EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamIgnoreNodesKey)), A<std::vector<std::string>&>()))
+        .WillOnce(Return(AwsError::AWS_ERR_FAILURE)); 
+
+      EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamIgnoreNodesKey)), A<std::vector<std::string>&>()))
+        .WillOnce(Return(AwsError::AWS_ERR_NOT_FOUND)); 
+
+      EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamIgnoreNodesKey)), A<std::vector<std::string>&>()))
+        .WillOnce(Invoke(MockReadParamAddStringToList));
+    }
+
+    std::unordered_set<std::string> param; 
+    EXPECT_EQ(AwsError::AWS_ERR_FAILURE, ReadIgnoreNodesSet(param_reader_, param));
+    EXPECT_EQ(0, param.size());
+
+    EXPECT_EQ(AwsError::AWS_ERR_NOT_FOUND, ReadIgnoreNodesSet(param_reader_, param));
+    EXPECT_EQ(0, param.size());
+    
+    EXPECT_EQ(AwsError::AWS_ERR_OK, ReadIgnoreNodesSet(param_reader_, param));
+    EXPECT_EQ(1, param.count("String1"));
 }
 
 int main(int argc, char ** argv)
