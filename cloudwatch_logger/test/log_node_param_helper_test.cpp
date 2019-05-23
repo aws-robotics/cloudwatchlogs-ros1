@@ -34,7 +34,7 @@ using Aws::AwsError;
 class ParameterReaderMock : public ParameterReaderInterface 
 {
 public:
- MOCK_CONST_METHOD2(ReadParam, Aws::AwsError(const ParameterPath &, std::vector<std::string> &));
+  MOCK_CONST_METHOD2(ReadParam, Aws::AwsError(const ParameterPath &, std::vector<std::string> &));
   MOCK_CONST_METHOD2(ReadParam, Aws::AwsError(const ParameterPath &, double &));
   MOCK_CONST_METHOD2(ReadParam, Aws::AwsError(const ParameterPath &, int &));
   MOCK_CONST_METHOD2(ReadParam, Aws::AwsError(const ParameterPath &, bool &));
