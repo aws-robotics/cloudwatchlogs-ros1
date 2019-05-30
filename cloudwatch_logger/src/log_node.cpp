@@ -19,9 +19,10 @@
 #include <aws_ros1_common/sdk_utils/logging/aws_ros_logger.h>
 #include <aws_ros1_common/sdk_utils/ros1_node_parameter_reader.h>
 #include <cloudwatch_logger/log_node.h>
-#include <cloudwatch_logs_common/log_manager.h>
-#include <cloudwatch_logs_common/log_manager_factory.h>
+#include <cloudwatch_logs_common/log_batcher.h>
+#include <cloudwatch_logs_common/log_service_factory.h>
 #include <cloudwatch_logs_common/log_publisher.h>
+#include <cloudwatch_logs_common/log_service.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
 
@@ -30,34 +31,38 @@ using namespace Aws::CloudWatchLogs::Utils;
 LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes) 
     : ignore_nodes_(std::move(ignore_nodes))
 {
-  this->log_manager_ = nullptr;
+  this->log_service_ = nullptr;
   this->min_log_severity_ = min_log_severity;
 }
 
-LogNode::~LogNode() { this->log_manager_ = nullptr; }
+LogNode::~LogNode() { this->log_service_ = nullptr; }
 
 void LogNode::Initialize(const std::string & log_group, const std::string & log_stream,
                          const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
-                         std::shared_ptr<LogManagerFactory> factory)
+                         std::shared_ptr<LogServiceFactory> factory)
 {
-  this->log_manager_ = factory->CreateLogManager(log_group, log_stream, config, sdk_options);
+  this->log_service_ = factory->CreateLogService(log_group, log_stream, config, sdk_options);
+  this->log_service_->start(); // this is where the init happens
 }
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
 {
   if (0 == this->ignore_nodes_.count(log_msg->name)) {
-    if (nullptr == this->log_manager_) {
+    if (nullptr == this->log_service_) {
       AWS_LOG_ERROR(__func__,
                     "Cannot publish CloudWatch logs with NULL CloudWatch LogManager instance.");
       return;
     }
     if (ShouldSendToCloudWatchLogs(log_msg->level)) {
-      this->log_manager_->RecordLog(FormatLogs(log_msg));
+      this->log_service_->batchData(FormatLogs(log_msg));
+      this->log_service_->batchData(std::string("this is a test message along for the ride"));
     }
   }
 }
 
-void LogNode::TriggerLogPublisher(const ros::TimerEvent &) { this->log_manager_->Service(); }
+void LogNode::TriggerLogPublisher(const ros::TimerEvent &) {
+  this->log_service_->publishBatchedData();
+}
 
 bool LogNode::ShouldSendToCloudWatchLogs(const int8_t log_severity_level)
 {

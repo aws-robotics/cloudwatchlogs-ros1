@@ -21,6 +21,7 @@
 #include <rosgraph_msgs/Log.h>
 #include <iostream>
 #include <unordered_set>
+#include <string>
 
 using namespace Aws::CloudWatchLogs::Utils;
 
@@ -58,15 +59,19 @@ int main(int argc, char ** argv)
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);
   Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
-  Aws::SDKOptions sdk_options;
 
+  Aws::SDKOptions sdk_options;
+  sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Debug;
+
+  // todo batch by size
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
-  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options);
+  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options); // todo why not make this a service as well?
 
   // callback function
   boost::function<void(const rosgraph_msgs::Log::ConstPtr &)> callback;
   callback = [&cloudwatch_logger](const rosgraph_msgs::Log::ConstPtr & log_msg) -> void {
     cloudwatch_logger.RecordLogs(log_msg);
+
   };
 
   // subscribe to additional topics, if any
