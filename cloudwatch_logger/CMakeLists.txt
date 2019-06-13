@@ -4,6 +4,8 @@ project(cloudwatch_logger)
 ## Compile as C++11, supported in ROS Kinetic and newer
 set(CMAKE_CXX_STANDARD 11)
 
+find_package(dataflow_lite REQUIRED)
+find_package(file_management REQUIRED)
 find_package(cloudwatch_logs_common REQUIRED)
 
 ## Find catkin macros and libraries
@@ -26,6 +28,13 @@ catkin_package()
 
 ## Declare a C++ executable
 add_library(${PROJECT_NAME}_lib SHARED src/log_node.cpp src/log_node_param_helper.cpp)
+
+target_include_directories(${PROJECT_NAME}_lib PUBLIC include ${catkin_INCLUDE_DIRS} ${dataflow_lite_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME}_lib ${catkin_LIBRARIES} ${cloudwatch_logs_common_LIBRARIES})
+
+target_include_directories(${PROJECT_NAME}_lib PUBLIC include ${catkin_INCLUDE_DIRS} ${file_management_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME}_lib ${catkin_LIBRARIES} ${file_management_LIBRARIES})
+
 target_include_directories(${PROJECT_NAME}_lib PUBLIC include ${catkin_INCLUDE_DIRS} ${cloudwatch_logs_common_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME}_lib ${catkin_LIBRARIES} ${cloudwatch_logs_common_LIBRARIES})
 
@@ -111,7 +120,7 @@ if(CATKIN_ENABLE_TESTING)
       include
       ${catkin_INCLUDE_DIRS}
       ${cloudwatch_logger_INCLUDE_DIRS}
-    )   
+    )
     target_link_libraries(test_log_node_param_helper
       ${PROJECT_NAME}_lib
       ${catkin_LIBRARIES}
