@@ -61,7 +61,7 @@ int main(int argc, char ** argv)
   Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
 
   Aws::SDKOptions sdk_options;
-  sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Debug;
+  sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
 
   // todo batch by size
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);

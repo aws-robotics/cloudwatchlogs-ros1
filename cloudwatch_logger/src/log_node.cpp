@@ -55,7 +55,6 @@ void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
     }
     if (ShouldSendToCloudWatchLogs(log_msg->level)) {
       this->log_service_->batchData(FormatLogs(log_msg));
-      this->log_service_->batchData(std::string("this is a test message along for the ride"));
     }
   }
 }
