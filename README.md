@@ -94,8 +94,8 @@ An example launch file called `sample_application.launch` is provided.
 - **With** launch file using parameters in .yaml format (example provided)
   - ROS: `roslaunch cloudwatch_logger sample_application.launch`
 
-- **Without** launch file using default values
-  - ROS: `rosrun cloudwatch_logger cloudwatch_logger`
+- **Without** launch file using your configurations file
+  - ROS: `rosrun cloudwatch_logger cloudwatch_logger config_file:="/path/to/your/config"`
 
 ### Send a test log message
 - `rostopic pub -1 /rosout rosgraph_msgs/Log '{header: auto, level: 2, name: test_log, msg: test_cloudwatch_logger, function: test_logs, line: 1}'`
