@@ -2,8 +2,8 @@
 Changelog for package cloudwatch_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2019-06-21)
+------------------
 * Update package.xml for 2.1.0 release
   Signed-off-by: Ryan Newell <ryanewel@amazon.com>
 * Adds a new parameter for a list of node names to ignore logs from. (`#24 <https://github.com/aws-robotics/cloudwatchlogs-ros1/issues/24>`_)
