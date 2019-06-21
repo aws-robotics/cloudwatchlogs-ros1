@@ -2,6 +2,15 @@
 Changelog for package cloudwatch_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update package.xml for 2.1.0 release
+  Signed-off-by: Ryan Newell <ryanewel@amazon.com>
+* Adds a new parameter for a list of node names to ignore logs from. (`#24 <https://github.com/aws-robotics/cloudwatchlogs-ros1/issues/24>`_)
+  * Adds a new parameter for a list of node names to ignore logs from.
+* Removing old file that has already been refactored out into separate files.
+* Contributors: Nick Burek, Ryan Newell
+
 2.0.0 (2019-03-20)
 ------------------
 * Add unit tests for cloudwatch_logger node
