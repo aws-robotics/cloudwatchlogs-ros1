@@ -23,12 +23,14 @@
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
 #include <unordered_set>
+#include <std_srvs/Trigger.h>
+#include <std_srvs/Empty.h>
 
 namespace Aws {
 namespace CloudWatchLogs {
 namespace Utils {
 
-class LogNode
+class LogNode : public Service
 {
 public:
   /**
@@ -58,6 +60,9 @@ public:
                   const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options, 
                   std::shared_ptr<LogServiceFactory> log_service_factory = std::make_shared<LogServiceFactory>());
 
+  bool start() override;
+  bool shutdown() override;
+
   /**
    * @brief Emits RecordLog using the log manager
    *
@@ -72,6 +77,15 @@ public:
    * @param timer A ros timer
    */
   void TriggerLogPublisher(const ros::TimerEvent &);
+
+  /**
+   * Return a Trigger response detailing the LogService status.
+   *
+   * @param request input request
+   * @param response output response
+   * @return true if the request was handled successfully, false otherwise
+   */
+  bool checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response);
 
 private:
   bool ShouldSendToCloudWatchLogs(const int8_t log_severity_level);

@@ -25,6 +25,8 @@
 #include <cloudwatch_logs_common/log_service.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
+#include <std_srvs/Trigger.h>
+#include <std_srvs/Empty.h>
 
 using namespace Aws::CloudWatchLogs::Utils;
 
@@ -42,7 +44,34 @@ void LogNode::Initialize(const std::string & log_group, const std::string & log_
                          std::shared_ptr<LogServiceFactory> factory)
 {
   this->log_service_ = factory->CreateLogService(log_group, log_stream, config, sdk_options);
-  this->log_service_->start(); // this is where the init happens
+}
+
+bool LogNode::checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response) {
+
+  if (!this->log_service_) {
+    response.success = false;
+    response.message = "The LogService is not initialized";
+    return true;
+  }
+
+  response.success = this->log_service_->isConnected();
+  response.message = response.success ? "The LogService is connected" : "The LogService is not connected";
+
+  return true;
+}
+
+bool LogNode::start() {
+  if (this->log_service_) {
+    return this->log_service_->start();
+  }
+  return false;
+}
+
+bool LogNode::shutdown() {
+  if (this->log_service_) {
+    return this->log_service_->shutdown();
+  }
+  return false;
 }
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
@@ -54,7 +83,8 @@ void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
       return;
     }
     if (ShouldSendToCloudWatchLogs(log_msg->level)) {
-      this->log_service_->batchData(FormatLogs(log_msg));
+      auto message = FormatLogs(log_msg);
+      this->log_service_->batchData(message);
     }
   }
 }

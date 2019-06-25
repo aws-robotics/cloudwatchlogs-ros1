@@ -44,8 +44,12 @@ aws_client_configuration:
 
   # Values that determine the length of time, in milliseconds, to wait before timing out a request. You can increase
   # this value if you need to transfer large files, such as in Amazon S3 or Amazon CloudFront.
-  connect_timeout_ms: 9000
-  request_timeout_ms: 9000
+  connect_timeout_ms: 2000
+  request_timeout_ms: 2000
 
   # The number of retries for connecting to AWS Services
   max_retries: 10
+
+  # The retry strategy used when connection requests are attempted. If set to true then requests
+  # will fail fast, otherwise will use an exponential retry algorithm defined by the AWS SDK.
+  no_retry_strategy: true

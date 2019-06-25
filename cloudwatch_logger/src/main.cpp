@@ -61,17 +61,23 @@ int main(int argc, char ** argv)
   Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
 
   Aws::SDKOptions sdk_options;
-  sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Info;
+  sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Debug;
 
-  // todo batch by size
+  // todo batch by size (pass option)
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
-  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options); // todo why not make this a service as well?
+  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options);
+
+  ros::ServiceServer service = nh.advertiseService(
+    "testLoggerNode",
+    &Aws::CloudWatchLogs::Utils::LogNode::checkIfOnline,
+    &cloudwatch_logger);
+
+  cloudwatch_logger.start();
 
   // callback function
   boost::function<void(const rosgraph_msgs::Log::ConstPtr &)> callback;
   callback = [&cloudwatch_logger](const rosgraph_msgs::Log::ConstPtr & log_msg) -> void {
     cloudwatch_logger.RecordLogs(log_msg);
-
   };
 
   // subscribe to additional topics, if any
@@ -84,6 +90,7 @@ int main(int argc, char ** argv)
                    &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher, &cloudwatch_logger);
   ros::spin();
   AWS_LOGSTREAM_INFO(__func__, "Shutting down " << kNodeName << ".");
+  cloudwatch_logger.shutdown();
   Aws::Utils::Logging::ShutdownAWSLogging();
   ros::shutdown();
   return 0;
