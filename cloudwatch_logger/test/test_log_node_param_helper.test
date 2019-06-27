@@ -1,0 +1,3 @@
+<launch>
+    <test test-name="test_log_node_param_helper" pkg="cloudwatch_logger" type="test_log_node_param_helper"/>
+</launch>
