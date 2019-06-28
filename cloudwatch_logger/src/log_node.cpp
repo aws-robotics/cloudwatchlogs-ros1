@@ -27,7 +27,8 @@
 
 using namespace Aws::CloudWatchLogs::Utils;
 
-LogNode::LogNode(int8_t min_log_severity)
+LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes) 
+    : ignore_nodes_(std::move(ignore_nodes))
 {
   this->log_manager_ = nullptr;
   this->min_log_severity_ = min_log_severity;
@@ -44,7 +45,7 @@ void LogNode::Initialize(const std::string & log_group, const std::string & log_
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
 {
-  if (log_msg->name != "/cloudwatch_logger" && log_msg->name != "/cloudwatch_metrics_collector") {
+  if (0 == this->ignore_nodes_.count(log_msg->name)) {
     if (nullptr == this->log_manager_) {
       AWS_LOG_ERROR(__func__,
                     "Cannot publish CloudWatch logs with NULL CloudWatch LogManager instance.");

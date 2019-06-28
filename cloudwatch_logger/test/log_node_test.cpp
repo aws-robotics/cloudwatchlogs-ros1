@@ -66,9 +66,10 @@ protected:
     log_message_.level = rosgraph_msgs::Log::DEBUG;
   }
 
-  std::shared_ptr<LogNode> build_test_subject(int8_t severity_level = rosgraph_msgs::Log::DEBUG) 
+  std::shared_ptr<LogNode> build_test_subject(int8_t severity_level = rosgraph_msgs::Log::DEBUG,
+      std::unordered_set<std::string> ignore_nodes = std::unordered_set<std::string>()) 
   {
-    return std::make_shared<LogNode>(severity_level);
+    return std::make_shared<LogNode>(severity_level, ignore_nodes);
   }
 
   rosgraph_msgs::Log::ConstPtr message_to_constptr(rosgraph_msgs::Log log_message)
@@ -213,6 +214,24 @@ TEST_F(LogNodeFixture, TestTriggerLogPublisher)
   test_subject->TriggerLogPublisher(event1);
   test_subject->TriggerLogPublisher(event2);
   test_subject->TriggerLogPublisher(event3);
+}
+
+
+TEST_F(LogNodeFixture, TestRecordLogIgnoreList)
+{
+  std::unordered_set<std::string> ignore_nodes;
+  ignore_nodes.emplace(log_message_.name);
+  std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::DEBUG, ignore_nodes);
+
+  initialize_log_node(test_subject);
+
+  ON_CALL(*log_manager_, RecordLog(_))
+    .WillByDefault(Return(Aws::CloudWatchLogs::ROSCloudWatchLogsErrors::CW_LOGS_SUCCEEDED));
+  EXPECT_CALL(*log_manager_, RecordLog(_))
+    .Times(0);
+
+  log_message_.level = rosgraph_msgs::Log::INFO;
+  test_subject->RecordLogs(message_to_constptr(log_message_));
 }
 
 int main(int argc, char ** argv)

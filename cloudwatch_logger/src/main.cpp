@@ -16,10 +16,11 @@
 #include <aws/core/utils/logging/LogMacros.h>
 #include <aws_common/sdk_utils/client_configuration_provider.h>
 #include <cloudwatch_logger/log_node.h>
+#include <cloudwatch_logger/log_node_param_helper.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
 #include <iostream>
-#include <cloudwatch_logger/log_node_param_helper.h>
+#include <unordered_set>
 
 using namespace Aws::CloudWatchLogs::Utils;
 
@@ -39,6 +40,7 @@ int main(int argc, char ** argv)
   bool subscribe_to_rosout;
   int8_t min_log_verbosity;
   std::vector<ros::Subscriber> subscriptions;
+  std::unordered_set<std::string> ignore_nodes;
 
   ros::NodeHandle nh;
 
@@ -51,13 +53,14 @@ int main(int argc, char ** argv)
   ReadLogStream(parameter_reader, log_stream);
   ReadSubscribeToRosout(parameter_reader, subscribe_to_rosout);
   ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
+  ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
 
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);
   Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
   Aws::SDKOptions sdk_options;
 
-  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity);
+  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options);
 
   // callback function

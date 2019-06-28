@@ -22,6 +22,11 @@ sub_to_rosout: true
 # default value is: empty list
 topics: []
 
+# list of node names to ignore logs from
+# e.g. To ignore all logs from a node named 'Talker' you would use the following configuration:
+#      ignore_nodes: ["/Talker"]
+ignore_nodes: ["/cloudwatch_logger", "/cloudwatch_metrics_collector"]
+
 # send logs to CloudWatch Logs based on log verbosity level
 # allowed values are: DEBUG, INFO, WARN, ERROR, FATAL
 # e.g. INFO level logs AND logs of log levels above(WARN, ERROR, FATAL) get sent to CloudWatch Logs
