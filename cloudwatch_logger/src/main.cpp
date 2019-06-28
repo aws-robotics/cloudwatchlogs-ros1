@@ -23,6 +23,8 @@
 #include <unordered_set>
 #include <string>
 
+#include <cloudwatch_logs_common/cloudwatch_options.h>
+
 using namespace Aws::CloudWatchLogs::Utils;
 
 constexpr char kNodeName[] = "cloudwatch_logger";
@@ -42,6 +44,7 @@ int main(int argc, char ** argv)
   int8_t min_log_verbosity;
   std::vector<ros::Subscriber> subscriptions;
   std::unordered_set<std::string> ignore_nodes;
+  Aws::CloudWatchLogs::CloudWatchOptions cloudwatch_options;
 
   ros::NodeHandle nh;
 
@@ -55,6 +58,8 @@ int main(int argc, char ** argv)
   ReadSubscribeToRosout(parameter_reader, subscribe_to_rosout);
   ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
   ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
+
+  ReadCloudwatchOptions(parameter_reader, cloudwatch_options);
 
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);

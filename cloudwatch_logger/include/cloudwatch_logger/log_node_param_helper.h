@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <cloudwatch_logs_common/cloudwatch_options.h>
 #include <aws_common/sdk_utils/aws_error.h>
 #include <aws_common/sdk_utils/parameter_reader.h>
 #include <ros/ros.h>
@@ -35,6 +36,20 @@ constexpr char kNodeParamLogGroupNameKey[] = "log_group_name";
 constexpr char kNodeParamLogTopicsListKey[] = "topics";
 constexpr char kNodeParamMinLogVerbosityKey[] = "min_log_verbosity";
 constexpr char kNodeParamIgnoreNodesKey[] = "ignore_nodes";
+
+/** Configuration params for Aws::DataFlow::UploaderOptions **/
+const std::string kNodeParamFileUploadBatchSize = "file_upload_batch_size";
+const std::string kNodeParamFileMaxQueueSize = "file_max_queue_size";
+const std::string kNodeParamStreamMaxQueueSize = "stream_max_queue_size";
+const std::string kNodeParamBatchMaxQueueSize = "batch_max_queue_size";
+const std::string kNodeParamBatchTriggerPublishSize = "batch_trigger_publish_size";
+
+/** Configuration params for Aws::FileManagement::FileManagerStrategyOptions **/
+constexpr char kNodeParamFilePrefix[] = "file_prefix";
+constexpr char kNodeParamStorageDirectory[] = "storage_directory";
+constexpr char kNodeParamFileExtension[] = "file_extension";
+constexpr char kNodeParamMaximumFileSize[] = "maximum_file_size";
+constexpr char kNodeParamStorageLimit[] = "storage_limit";
 
 constexpr char kNodeLogGroupNameDefaultValue[] = "ros_log_group";
 constexpr char kNodeLogStreamNameDefaultValue[] = "ros_log_stream";
@@ -131,6 +146,40 @@ Aws::AwsError ReadSubscriberList(
 Aws::AwsError ReadIgnoreNodesSet(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   std::unordered_set<std::string> & ignore_nodes);
+
+Aws::AwsError ReadCloudwatchOptions(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options);
+
+void ReadUploaderOptions(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  Aws::DataFlow::UploaderOptions & uploader_options);
+
+Aws::AwsError ReadUploaderOption(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::string & option_key,
+  const size_t & default_value,
+  size_t & option_value);
+
+void ReadFileManagerStrategyOptions(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  Aws::FileManagement::FileManagerStrategyOptions & uploader_options);
+
+Aws::AwsError ReadFileManagerStrategyOption(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::string & option_key,
+  const std::string & default_value,
+  std::string & option_value);
+
+Aws::AwsError ReadFileManagerStrategyOption(
+  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::string & option_key,
+  const size_t & default_value,
+  size_t & option_value);
+
+
+
+
 
 }  // namespace Utils
 }  // namespace CloudWatchLogs
