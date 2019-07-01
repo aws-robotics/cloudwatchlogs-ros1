@@ -57,7 +57,8 @@ public:
    * @param log_service_factory optional log manager factory
    */
   void Initialize(const std::string & log_group, const std::string & log_stream,
-                  const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options, 
+                  const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
+                  const Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options,
                   std::shared_ptr<LogServiceFactory> log_service_factory = std::make_shared<LogServiceFactory>());
 
   bool start() override;

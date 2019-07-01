@@ -38,11 +38,11 @@ constexpr char kNodeParamMinLogVerbosityKey[] = "min_log_verbosity";
 constexpr char kNodeParamIgnoreNodesKey[] = "ignore_nodes";
 
 /** Configuration params for Aws::DataFlow::UploaderOptions **/
-const std::string kNodeParamFileUploadBatchSize = "file_upload_batch_size";
-const std::string kNodeParamFileMaxQueueSize = "file_max_queue_size";
-const std::string kNodeParamStreamMaxQueueSize = "stream_max_queue_size";
-const std::string kNodeParamBatchMaxQueueSize = "batch_max_queue_size";
-const std::string kNodeParamBatchTriggerPublishSize = "batch_trigger_publish_size";
+constexpr char kNodeParamFileUploadBatchSize[] = "file_upload_batch_size";
+constexpr char kNodeParamFileMaxQueueSize[] = "file_max_queue_size";
+constexpr char kNodeParamStreamMaxQueueSize[] = "stream_max_queue_size";
+constexpr char kNodeParamBatchMaxQueueSize[] = "batch_max_queue_size";
+constexpr char kNodeParamBatchTriggerPublishSize[] = "batch_trigger_publish_size";
 
 /** Configuration params for Aws::FileManagement::FileManagerStrategyOptions **/
 constexpr char kNodeParamFilePrefix[] = "file_prefix";

@@ -34,6 +34,35 @@ ignore_nodes: ["/cloudwatch_logger", "/cloudwatch_metrics_collector"]
 # default value is: DEBUG == logs of all log verbosity levels get sent to CloudWatch Logs
 min_log_verbosity: DEBUG
 
+### Options related to file uploading ###
+
+file_upload_batch_size: 40
+
+# Maximum number of files in the queue when reading from disk
+file_max_queue_size: 3
+
+# Maximum number of files in the queue when streaming
+stream_max_queue_size: 30
+
+batch_max_queue_size: 512
+
+batch_trigger_publish_size: 2048
+
+
+
+### Options related to offline file management ###
+
+storage_directory: "~/.ros/storage/"
+
+file_prefix: "MyAppName"
+
+file_extension: ".pewpew"
+
+# The maximum size of each file in offline storage
+maximum_file_size: 42
+
+storage_limit: 5500
+
 # This is the AWS Client Configuration used by the AWS service client in the Node. If given the node will load the
 # provided configuration when initializing the client.
 aws_client_configuration:

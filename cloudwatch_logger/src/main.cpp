@@ -70,7 +70,7 @@ int main(int argc, char ** argv)
 
   // todo batch by size (pass option)
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
-  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options);
+  cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
   ros::ServiceServer service = nh.advertiseService(
     "testLoggerNode",

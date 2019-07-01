@@ -4,7 +4,7 @@
     <!-- If a config file argument is provided by the caller then we will load it into the node's namespace -->
     <arg name="config_file" default="" />
     <!-- The output argument sets the node's stdout/stderr location. Set to 'screen' to see this node's output in the terminal. -->
-    <arg name="output" default="log" />
+    <arg name="output" default="screen" />
         
     <node name="$(arg node_name)" pkg="cloudwatch_logger" type="cloudwatch_logger" output="$(arg output)">
         <!-- If the caller specified a config file then load it here. -->

@@ -340,7 +340,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
                            << default_value);
       break;
     case Aws::AwsError::AWS_ERR_OK:
-    AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
+      AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
       break;
     default:
       option_value = default_value;
