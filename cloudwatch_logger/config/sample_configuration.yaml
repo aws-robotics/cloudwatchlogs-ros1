@@ -36,32 +36,43 @@ min_log_verbosity: DEBUG
 
 ### Options related to file uploading ###
 
-file_upload_batch_size: 40
+# How many unique logs to send to CloudWatch in each upload
+file_upload_batch_size: 5
 
-# Maximum number of files in the queue when reading from disk
-file_max_queue_size: 3
+# Maximum number of files in the upload queue when reading from disk
+file_max_queue_size: 10
 
-# Maximum number of files in the queue when streaming
-stream_max_queue_size: 30
+# Maximum number of files in the upload queue when streaming live logs
+# from the robot to CloudWatch logs
+stream_max_queue_size: 10
 
+# Maximum number of items to add to the upload queue.
+# If this limit is reached the logs will start to be written to disk.
 batch_max_queue_size: 512
 
-batch_trigger_publish_size: 2048
-
-
+# Once this many log items are in the queue
+# a cloudwatch log spublish will be triggered.
+# If this is not set the logs will be published on a constant timer
+# regardless of the queue size.
+# batch_trigger_publish_size: 64
 
 ### Options related to offline file management ###
 
+# The absolute path to a folder that all
+# offline logs will be stored in
 storage_directory: "~/.ros/storage/"
 
-file_prefix: "MyAppName"
+# This prefix will be added to all offline log files
+file_prefix: "my-app"
 
-file_extension: ".pewpew"
+# This file extension will be used for all offline log files
+file_extension: ".log"
 
-# The maximum size of each file in offline storage
-maximum_file_size: 42
+# The maximum size of each file in offline storage in KB
+maximum_file_size: 1024
 
-storage_limit: 5500
+# The maximum size of all files in offline storage in KB
+storage_limit: 65536
 
 # This is the AWS Client Configuration used by the AWS service client in the Node. If given the node will load the
 # provided configuration when initializing the client.
