@@ -89,10 +89,15 @@ int main(int argc, char ** argv)
   ReadSubscriberList(subscribe_to_rosout, parameter_reader, callback, nh, subscriptions);
   AWS_LOGSTREAM_INFO(__func__, "Initialized " << kNodeName << ".");
 
-  // a ros timer that triggers log publisher to publish periodically
-  ros::Timer timer =
-    nh.createTimer(ros::Duration(publish_frequency),
-                   &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher, &cloudwatch_logger);
+  bool publish_when_size_reached = cloudwatch_options.uploader_options.batch_trigger_publish_size
+    != Aws::DataFlow::kDefaultUploaderOptions.batch_trigger_publish_size;
+
+  // Publish on a timer if we are not publishing on a size limit.
+  if (!publish_when_size_reached) {
+    ros::Timer timer =
+      nh.createTimer(ros::Duration(publish_frequency),
+                     &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher, &cloudwatch_logger);
+  }
   ros::spin();
   AWS_LOGSTREAM_INFO(__func__, "Shutting down " << kNodeName << ".");
   cloudwatch_logger.shutdown();
