@@ -59,7 +59,7 @@ int main(int argc, char ** argv)
   ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
   ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
 
-  ReadCloudwatchOptions(parameter_reader, cloudwatch_options);
+  ReadCloudWatchOptions(parameter_reader, cloudwatch_options);
 
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);

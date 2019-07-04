@@ -34,36 +34,31 @@ ignore_nodes: ["/cloudwatch_logger", "/cloudwatch_metrics_collector"]
 # default value is: DEBUG == logs of all log verbosity levels get sent to CloudWatch Logs
 min_log_verbosity: DEBUG
 
-### Options related to file uploading ###
-
-# How many unique logs to send to CloudWatch in each upload
-file_upload_batch_size: 5
-
-# Maximum number of files in the upload queue when reading from disk
-file_max_queue_size: 10
-
-# Maximum number of files in the upload queue when streaming live logs
-# from the robot to CloudWatch logs
-stream_max_queue_size: 10
+### Options related to uploading to CloudWatch ###
 
 # Maximum number of items to add to the upload queue.
 # If this limit is reached the logs will start to be written to disk.
-batch_max_queue_size: 512
+batch_max_queue_size: 1024
 
-# Once this many log items are in the queue
-# a cloudwatch log spublish will be triggered.
-# If this is not set the logs will be published on a constant timer
-# regardless of the queue size.
+# Once this many log items are in the queue a CloudWatch log publish will be triggered.
+# If this is not set the logs will be published on a constant timer regardless of the queue size.
 # batch_trigger_publish_size: 64
 
-### Options related to offline file management ###
+# How many unique logs to send to CloudWatch in each upload
+file_upload_batch_size: 50
 
-# The absolute path to a folder that all
-# offline logs will be stored in
-storage_directory: "~/.ros/storage/"
+# Maximum number of files in the upload queue when reading from disk
+file_max_queue_size: 2
+
+# Maximum number of files in the upload queue when streaming live logs from the node to CloudWatch logs
+stream_max_queue_size: 20
+
+### Options related to offline file management ###
+# When this node goes offline or cannot talk to CloudWatch it will store all metrics in text files on disk
+# Then when it's back online it will upload them to CloudWatch. These are settings related to this feature.
 
 # This prefix will be added to all offline log files
-file_prefix: "my-app"
+file_prefix: "cwlog"
 
 # This file extension will be used for all offline log files
 file_extension: ".log"
@@ -71,8 +66,11 @@ file_extension: ".log"
 # The maximum size of each file in offline storage in KB
 maximum_file_size: 1024
 
+# The absolute path to a folder that all offline logs will be stored in
+storage_directory: "~/.ros/cwlogs/"
+
 # The maximum size of all files in offline storage in KB
-storage_limit: 65536
+storage_limit: 1048576
 
 # This is the AWS Client Configuration used by the AWS service client in the Node. If given the node will load the
 # provided configuration when initializing the client.

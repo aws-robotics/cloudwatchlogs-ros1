@@ -216,7 +216,7 @@ Aws::AwsError ReadIgnoreNodesSet(
   return ret;
 }
 
-Aws::AwsError ReadCloudwatchOptions(
+Aws::AwsError ReadCloudWatchOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options) {
 
@@ -230,9 +230,11 @@ Aws::AwsError ReadCloudwatchOptions(
     uploader_options,
     file_manager_strategy_options
   };
+
+  return Aws::AwsError::AWS_ERR_OK;
 }
 
-void ReadUploaderOptions(
+Aws::AwsError ReadUploaderOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::DataFlow::UploaderOptions & uploader_options) {
 
@@ -271,6 +273,7 @@ void ReadUploaderOptions(
     uploader_options.batch_trigger_publish_size
   );
 
+  return Aws::AwsError::AWS_ERR_OK;
 }
 
 Aws::AwsError ReadUploaderOption(
@@ -282,20 +285,25 @@ Aws::AwsError ReadUploaderOption(
   int param_value = 0;
   Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(option_key), param_value);
   switch (ret) {
+    case Aws::AwsError::AWS_ERR_NOT_FOUND:
+      option_value = default_value;
+      AWS_LOGSTREAM_WARN(__func__,
+                         option_key << " parameter not found, setting to default value: " << default_value);
+      break;
     case Aws::AwsError::AWS_ERR_OK:
       option_value = (size_t)param_value;
-      AWS_LOGSTREAM_INFO(__func__, option_key << " is set to " << option_value);
+      AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
       break;
     default:
       AWS_LOGSTREAM_ERROR(__func__,
-                                 "Error " << ret << " retrieving option " << option_value << ". Using default value of " << default_value);
+        "Error " << ret << " retrieving option " << option_value << ", setting to default value: " << default_value);
       option_value = default_value;
       break;
   }
   return ret;
 }
 
-void ReadFileManagerStrategyOptions(
+Aws::AwsError ReadFileManagerStrategyOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::FileManagement::FileManagerStrategyOptions & file_manager_strategy_options) {
 
@@ -324,6 +332,7 @@ void ReadFileManagerStrategyOptions(
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.storage_limit_in_kb,
     file_manager_strategy_options.storage_limit_in_kb);
 
+  return Aws::AwsError::AWS_ERR_OK;
 }
 
 Aws::AwsError ReadFileManagerStrategyOption(
@@ -336,8 +345,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       option_value = default_value;
       AWS_LOGSTREAM_WARN(__func__,
-                         option_key << " parameter not found, setting to default value: "
-                           << default_value);
+                         option_key << " parameter not found, setting to default value: " << default_value);
       break;
     case Aws::AwsError::AWS_ERR_OK:
       AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
@@ -345,8 +353,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
     default:
       option_value = default_value;
       AWS_LOGSTREAM_ERROR(__func__,
-                          "Error " << ret << " retrieving option " << option_key << ", setting to default value: "
-                                   << default_value);
+        "Error " << ret << " retrieving option " << option_key << ", setting to default value: " << default_value);
   }
   return ret;
 }
@@ -362,8 +369,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       option_value = default_value;
       AWS_LOGSTREAM_WARN(__func__,
-                         option_key << " parameter not found, setting to default value: "
-                           << default_value);
+                         option_key << " parameter not found, setting to default value: " << default_value);
       break;
     case Aws::AwsError::AWS_ERR_OK:
       option_value = (size_t)return_value;
@@ -372,17 +378,10 @@ Aws::AwsError ReadFileManagerStrategyOption(
     default:
       option_value = default_value;
       AWS_LOGSTREAM_ERROR(__func__,
-                          "Error " << ret << " retrieving option " << option_key << ", setting to default value: "
-                                   << default_value);
+        "Error " << ret << " retrieving option " << option_key << ", setting to default value: " << default_value);
   }
   return ret;
 }
-
-
-
-
-
-
 
 }  // namespace Utils
 }  // namespace CloudWatchLogs
