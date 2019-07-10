@@ -236,28 +236,28 @@ void ReadUploaderOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::DataFlow::UploaderOptions & uploader_options) {
 
-  ReadUploaderOption(
+  ReadOption(
     parameter_reader,
     kNodeParamFileUploadBatchSize,
     Aws::DataFlow::kDefaultUploaderOptions.file_upload_batch_size,
     uploader_options.file_upload_batch_size
   );
 
-  ReadUploaderOption(
+  ReadOption(
     parameter_reader,
     kNodeParamFileMaxQueueSize,
     Aws::DataFlow::kDefaultUploaderOptions.file_max_queue_size,
     uploader_options.file_max_queue_size
   );
 
-  ReadUploaderOption(
+  ReadOption(
     parameter_reader,
     kNodeParamBatchMaxQueueSize,
     Aws::DataFlow::kDefaultUploaderOptions.batch_max_queue_size,
     uploader_options.batch_max_queue_size
   );
 
-  ReadUploaderOption(
+  ReadOption(
     parameter_reader,
     kNodeParamBatchTriggerPublishSize,
     Aws::DataFlow::kDefaultUploaderOptions.batch_trigger_publish_size,
