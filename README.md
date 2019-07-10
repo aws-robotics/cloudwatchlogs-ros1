@@ -136,16 +136,29 @@ An example launch file called `sample_application.launch` is provided.
 ## Configuration File and Parameters
 An example configuration file called `sample_configuration.yaml` is provided. When the parameters are absent in the ROS parameter server, default values are used, thus all parameters are optional. See table below for details.
 
-| Parameter Name | Description | Type | Allowed Values |
-| -------------- | ----------- | ---- | -------------- |
-| sub_to_rosout  | Whether to subscribe to *rosout_agg* topic | *bool* | true/false |
-| publish_frequency | Log publishing frequency in seconds | *double* | number |
-| log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account |
-| log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed |
-| topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] |
-| ignore_nodes | A list of  of node names to ignore logs from | *std::vector<std::string>* | ['string', 'string', 'string'] |
-| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL |
-| aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. |
+| Parameter Name | Description | Type | Allowed Values | Default |
+| -------------- | ----------- | ---- | -------------- | ------------ |
+| sub_to_rosout  | Whether to subscribe to *rosout_agg* topic | *bool* | true/false | true |
+| publish_frequency | Log publishing frequency in seconds | *double* | number | 5.0 |
+| log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account | ros_log_group |
+| log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed | ros_log_stream |
+| topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] | `[]` |
+| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL | DEBUG |
+| storage_directory | The location where all offline metrics will be stored | *string* | string | ~/.ros/cwlogs/ |
+| storage_limit | The maximum size of all offline storage files in KB. Once this limit is reached offline logs will start to be deleted oldest first. | *int* | number | 1048576 |
+| aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. | region: us-west-2 |
+
+### Advanced Configuration Parameters
+Most users won't need to touch these parameters, they are useful if you want fine grained control over how your metrics are stored offline and uploaded to CloudWatch. 
+
+| Parameter Name | Description | Type | Default |
+| ------------- | -----------------------------------------------------------| ------------- | ------------ |
+| batch_max_queue_size | The maximum number metrics items to add to the CloudWatch upload queue before they start to be written to disk | *int* | 1024 |
+| batch_trigger_publish_size | Only publish metrics to CloudWatch when there are this many items in the queue. When this is set the publishing of metrics on a constant timer is disabled. This must be smaller than batch_max_queue_size | *int* | 64 |
+| file_upload_batch_size | When streaming metrics from disk to CloudWatch it will pull this many metric items into each batch | *int* | 50 |
+| file_prefix | A prefix to add to each offline storage file so they're easier to identify later | *string* | cwlog |
+| file_extension | The extension for all offline storage files | *string* | .log |
+| maximum_file_size | The maximum size each offline storage file in KB | *int* | 1024 |
 
 
 ## Performance and Benchmark Results

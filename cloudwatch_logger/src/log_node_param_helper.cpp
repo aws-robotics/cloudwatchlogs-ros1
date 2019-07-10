@@ -34,7 +34,7 @@ Aws::AwsError ReadPublishFrequency(
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       publish_frequency = kNodePublishFrequencyDefaultValue;
-      AWS_LOGSTREAM_WARN(__func__,
+      AWS_LOGSTREAM_INFO(__func__,
                          "Publish frequency configuration not found, setting to default value: "
                          << kNodePublishFrequencyDefaultValue);
       break;
@@ -58,7 +58,7 @@ Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       log_group = kNodeLogGroupNameDefaultValue;
-      AWS_LOGSTREAM_WARN(__func__,
+      AWS_LOGSTREAM_INFO(__func__,
                        "Log group name configuration not found, setting to default value: "
                          << kNodeLogGroupNameDefaultValue);
       break;
@@ -81,7 +81,7 @@ Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterfac
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       log_stream = kNodeLogStreamNameDefaultValue;
-      AWS_LOGSTREAM_WARN(__func__,
+      AWS_LOGSTREAM_INFO(__func__,
                          "Log stream name configuration not found, setting to default value: "
                          << kNodeLogStreamNameDefaultValue);
       break;
@@ -106,7 +106,7 @@ Aws::AwsError ReadSubscribeToRosout(
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       subscribe_to_rosout = kNodeSubscribeToRosoutDefaultValue;
-      AWS_LOGSTREAM_WARN(
+      AWS_LOGSTREAM_INFO(
       __func__,
       "Whether to subscribe to rosout_agg topic configuration not found, setting to default value: "
         << kNodeSubscribeToRosoutDefaultValue);
@@ -137,7 +137,7 @@ Aws::AwsError ReadMinLogVerbosity(
     parameter_reader->ReadParam(ParameterPath(kNodeParamMinLogVerbosityKey), specified_verbosity);
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
-      AWS_LOGSTREAM_WARN(__func__, "Log verbosity configuration not found, setting to default value: "
+      AWS_LOGSTREAM_INFO(__func__, "Log verbosity configuration not found, setting to default value: "
                                    << kNodeMinLogVerbosityDefaultValue);
       break;
     case Aws::AwsError::AWS_ERR_OK:
@@ -158,7 +158,7 @@ Aws::AwsError ReadMinLogVerbosity(
         AWS_LOG_INFO(__func__, "Log verbosity is set to FATAL.");
       } else {
         ret = AwsError::AWS_ERR_PARAM;
-        AWS_LOGSTREAM_WARN(__func__,
+        AWS_LOGSTREAM_INFO(__func__,
                           "Log verbosity configuration not valid, setting to default value: "
                            << kNodeMinLogVerbosityDefaultValue);
       }
@@ -216,7 +216,7 @@ Aws::AwsError ReadIgnoreNodesSet(
   return ret;
 }
 
-Aws::AwsError ReadCloudWatchOptions(
+void ReadCloudWatchOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options) {
 
@@ -230,11 +230,9 @@ Aws::AwsError ReadCloudWatchOptions(
     uploader_options,
     file_manager_strategy_options
   };
-
-  return Aws::AwsError::AWS_ERR_OK;
 }
 
-Aws::AwsError ReadUploaderOptions(
+void ReadUploaderOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::DataFlow::UploaderOptions & uploader_options) {
 
@@ -254,13 +252,6 @@ Aws::AwsError ReadUploaderOptions(
 
   ReadUploaderOption(
     parameter_reader,
-    kNodeParamStreamMaxQueueSize,
-    Aws::DataFlow::kDefaultUploaderOptions.stream_max_queue_size,
-    uploader_options.stream_max_queue_size
-  );
-
-  ReadUploaderOption(
-    parameter_reader,
     kNodeParamBatchMaxQueueSize,
     Aws::DataFlow::kDefaultUploaderOptions.batch_max_queue_size,
     uploader_options.batch_max_queue_size
@@ -272,70 +263,44 @@ Aws::AwsError ReadUploaderOptions(
     Aws::DataFlow::kDefaultUploaderOptions.batch_trigger_publish_size,
     uploader_options.batch_trigger_publish_size
   );
-
-  return Aws::AwsError::AWS_ERR_OK;
 }
 
-Aws::AwsError ReadUploaderOption(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
-  const std::string &option_key,
-  const size_t &default_value,
-  size_t & option_value) {
-
-  int param_value = 0;
-  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(option_key), param_value);
-  switch (ret) {
-    case Aws::AwsError::AWS_ERR_NOT_FOUND:
-      option_value = default_value;
-      AWS_LOGSTREAM_WARN(__func__,
-                         option_key << " parameter not found, setting to default value: " << default_value);
-      break;
-    case Aws::AwsError::AWS_ERR_OK:
-      option_value = (size_t)param_value;
-      AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
-      break;
-    default:
-      AWS_LOGSTREAM_ERROR(__func__,
-        "Error " << ret << " retrieving option " << option_value << ", setting to default value: " << default_value);
-      option_value = default_value;
-      break;
-  }
-  return ret;
-}
-
-Aws::AwsError ReadFileManagerStrategyOptions(
+void ReadFileManagerStrategyOptions(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   Aws::FileManagement::FileManagerStrategyOptions & file_manager_strategy_options) {
 
-  ReadFileManagerStrategyOption(parameter_reader,
+  ReadOption(
+    parameter_reader,
     kNodeParamStorageDirectory,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.storage_directory,
     file_manager_strategy_options.storage_directory);
 
-  ReadFileManagerStrategyOption(parameter_reader,
+  ReadOption(
+    parameter_reader,
     kNodeParamFilePrefix,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.file_prefix,
     file_manager_strategy_options.file_prefix);
 
-  ReadFileManagerStrategyOption(parameter_reader,
+  ReadOption(
+    parameter_reader,
     kNodeParamFileExtension,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.file_extension,
     file_manager_strategy_options.file_extension);
 
-  ReadFileManagerStrategyOption(parameter_reader,
+  ReadOption(
+    parameter_reader,
     kNodeParamMaximumFileSize,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.maximum_file_size_in_kb,
     file_manager_strategy_options.maximum_file_size_in_kb);
 
-  ReadFileManagerStrategyOption(parameter_reader,
+  ReadOption(
+    parameter_reader,
     kNodeParamStorageLimit,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.storage_limit_in_kb,
     file_manager_strategy_options.storage_limit_in_kb);
-
-  return Aws::AwsError::AWS_ERR_OK;
 }
 
-Aws::AwsError ReadFileManagerStrategyOption(
+void ReadOption(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   const std::string & option_key,
   const std::string & default_value,
@@ -344,7 +309,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       option_value = default_value;
-      AWS_LOGSTREAM_WARN(__func__,
+      AWS_LOGSTREAM_INFO(__func__,
                          option_key << " parameter not found, setting to default value: " << default_value);
       break;
     case Aws::AwsError::AWS_ERR_OK:
@@ -355,10 +320,9 @@ Aws::AwsError ReadFileManagerStrategyOption(
       AWS_LOGSTREAM_ERROR(__func__,
         "Error " << ret << " retrieving option " << option_key << ", setting to default value: " << default_value);
   }
-  return ret;
 }
 
-Aws::AwsError ReadFileManagerStrategyOption(
+void ReadOption(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   const std::string & option_key,
   const size_t & default_value,
@@ -368,7 +332,7 @@ Aws::AwsError ReadFileManagerStrategyOption(
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:
       option_value = default_value;
-      AWS_LOGSTREAM_WARN(__func__,
+      AWS_LOGSTREAM_INFO(__func__,
                          option_key << " parameter not found, setting to default value: " << default_value);
       break;
     case Aws::AwsError::AWS_ERR_OK:
@@ -380,7 +344,6 @@ Aws::AwsError ReadFileManagerStrategyOption(
       AWS_LOGSTREAM_ERROR(__func__,
         "Error " << ret << " retrieving option " << option_key << ", setting to default value: " << default_value);
   }
-  return ret;
 }
 
 }  // namespace Utils
