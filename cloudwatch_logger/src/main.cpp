@@ -68,7 +68,6 @@ int main(int argc, char ** argv)
   Aws::SDKOptions sdk_options;
   sdk_options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Debug;
 
-  // todo batch by size (pass option)
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
@@ -92,16 +91,20 @@ int main(int argc, char ** argv)
   bool publish_when_size_reached = cloudwatch_options.uploader_options.batch_trigger_publish_size
     != Aws::DataFlow::kDefaultUploaderOptions.batch_trigger_publish_size;
 
+  ros::Timer timer;
   // Publish on a timer if we are not publishing on a size limit.
   if (!publish_when_size_reached) {
-    ros::Timer timer =
+    timer =
       nh.createTimer(ros::Duration(publish_frequency),
                      &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher, &cloudwatch_logger);
   }
+
   ros::spin();
+
   AWS_LOGSTREAM_INFO(__func__, "Shutting down " << kNodeName << ".");
   cloudwatch_logger.shutdown();
   Aws::Utils::Logging::ShutdownAWSLogging();
   ros::shutdown();
+
   return 0;
 }
