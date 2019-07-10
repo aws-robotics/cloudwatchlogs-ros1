@@ -42,6 +42,7 @@ constexpr char kNodeParamFileUploadBatchSize[] = "file_upload_batch_size";
 constexpr char kNodeParamFileMaxQueueSize[] = "file_max_queue_size";
 constexpr char kNodeParamBatchMaxQueueSize[] = "batch_max_queue_size";
 constexpr char kNodeParamBatchTriggerPublishSize[] = "batch_trigger_publish_size";
+constexpr char kNodeParamStreamMaxQueueSize[] = "stream_max_queue_size";
 
 /** Configuration params for Aws::FileManagement::FileManagerStrategyOptions **/
 constexpr char kNodeParamFilePrefix[] = "file_prefix";

@@ -263,6 +263,13 @@ void ReadUploaderOptions(
     Aws::DataFlow::kDefaultUploaderOptions.batch_trigger_publish_size,
     uploader_options.batch_trigger_publish_size
   );
+
+  ReadOption(
+    parameter_reader,
+    kNodeParamStreamMaxQueueSize,
+    Aws::DataFlow::kDefaultUploaderOptions.stream_max_queue_size,
+    uploader_options.stream_max_queue_size
+  );
 }
 
 void ReadFileManagerStrategyOptions(

@@ -159,6 +159,7 @@ Most users won't need to touch these parameters, they are useful if you want fin
 | file_prefix | A prefix to add to each offline storage file so they're easier to identify later | *string* | cwlog |
 | file_extension | The extension for all offline storage files | *string* | .log |
 | maximum_file_size | The maximum size each offline storage file in KB | *int* | 1024 |
+| stream_max_queue_size | The maximum number of batches in the queue to stream to CloudWatch. If this queue is full subsequent batches of logs will be written to disk. | *int* | 3 |
 
 ## Node
 
