@@ -71,10 +71,9 @@ int main(int argc, char ** argv)
   Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
-  ros::ServiceServer service = nh.advertiseService(
-    "testLoggerNode",
-    &Aws::CloudWatchLogs::Utils::LogNode::checkIfOnline,
-    &cloudwatch_logger);
+  ros::ServiceServer service = nh.advertiseService(kNodeName,
+                                                   &Aws::CloudWatchLogs::Utils::LogNode::checkIfOnline,
+                                                   &cloudwatch_logger);
 
   cloudwatch_logger.start();
 
@@ -96,7 +95,8 @@ int main(int argc, char ** argv)
   if (!publish_when_size_reached) {
     timer =
       nh.createTimer(ros::Duration(publish_frequency),
-                     &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher, &cloudwatch_logger);
+                     &Aws::CloudWatchLogs::Utils::LogNode::TriggerLogPublisher,
+                     &cloudwatch_logger);
   }
 
   ros::spin();

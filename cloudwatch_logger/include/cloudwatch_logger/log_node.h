@@ -80,7 +80,7 @@ public:
   void TriggerLogPublisher(const ros::TimerEvent &);
 
   /**
-   * Return a Trigger response detailing the LogService status.
+   * Return a Trigger response detailing the LogService online status.
    *
    * @param request input request
    * @param response output response

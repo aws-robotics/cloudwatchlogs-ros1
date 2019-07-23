@@ -49,6 +49,8 @@ void LogNode::Initialize(const std::string & log_group, const std::string & log_
 
 bool LogNode::checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response) {
 
+  AWS_LOGSTREAM_DEBUG(__func__, "received request " << request);
+
   if (!this->log_service_) {
     response.success = false;
     response.message = "The LogService is not initialized";
@@ -62,17 +64,20 @@ bool LogNode::checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigg
 }
 
 bool LogNode::start() {
+  bool is_started = true;
   if (this->log_service_) {
-    return this->log_service_->start();
+    is_started &= this->log_service_->start();
   }
-  return false;
+  is_started &= Service::start();
+  return is_started;
 }
 
 bool LogNode::shutdown() {
+  bool is_shutdown = Service::shutdown();
   if (this->log_service_) {
-    return this->log_service_->shutdown();
+    is_shutdown &= this->log_service_->shutdown();
   }
-  return false;
+  return is_shutdown;
 }
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
