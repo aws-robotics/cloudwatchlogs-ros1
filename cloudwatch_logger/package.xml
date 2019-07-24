@@ -17,7 +17,9 @@
   <build_depend>aws_common</build_depend>
   <build_depend>aws_ros1_common</build_depend>
   <build_depend>roscpp</build_depend>
-
+  <build_depend>std_srvs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  
   <build_export_depend>cloudwatch_logs_common</build_export_depend>
   <build_export_depend>aws_common</build_export_depend>
   <build_export_depend>aws_ros1_common</build_export_depend>
@@ -31,7 +33,6 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_srvs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-
 
   <test_depend>gtest</test_depend>
   <test_depend>google-mock</test_depend>
