@@ -22,11 +22,16 @@
   <build_export_depend>aws_common</build_export_depend>
   <build_export_depend>aws_ros1_common</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>std_srvs</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
 
   <exec_depend>cloudwatch_logs_common</exec_depend>
   <exec_depend>aws_common</exec_depend>
   <exec_depend>aws_ros1_common</exec_depend>
   <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
 
   <test_depend>gtest</test_depend>
   <test_depend>google-mock</test_depend>

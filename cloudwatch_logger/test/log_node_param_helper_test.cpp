@@ -254,6 +254,7 @@ TEST_F(LogNodeParamHelperFixture, TestReadReadMinLogVerbosity)
 
 AwsError MockReadParamAddStringToList(const ParameterPath & param_path, std::vector<std::string> & out)
 {
+  (void)param_path;
   out.emplace_back("String1");
   return AwsError::AWS_ERR_OK;
 }

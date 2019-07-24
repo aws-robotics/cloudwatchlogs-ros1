@@ -19,45 +19,85 @@
 #include <aws_ros1_common/sdk_utils/logging/aws_ros_logger.h>
 #include <aws_ros1_common/sdk_utils/ros1_node_parameter_reader.h>
 #include <cloudwatch_logger/log_node.h>
-#include <cloudwatch_logs_common/log_manager.h>
-#include <cloudwatch_logs_common/log_manager_factory.h>
+#include <cloudwatch_logs_common/log_batcher.h>
+#include <cloudwatch_logs_common/log_service_factory.h>
 #include <cloudwatch_logs_common/log_publisher.h>
+#include <cloudwatch_logs_common/log_service.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
+#include <std_srvs/Trigger.h>
+#include <std_srvs/Empty.h>
 
 using namespace Aws::CloudWatchLogs::Utils;
 
 LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes) 
     : ignore_nodes_(std::move(ignore_nodes))
 {
-  this->log_manager_ = nullptr;
+  this->log_service_ = nullptr;
   this->min_log_severity_ = min_log_severity;
 }
 
-LogNode::~LogNode() { this->log_manager_ = nullptr; }
+LogNode::~LogNode() { this->log_service_ = nullptr; }
 
 void LogNode::Initialize(const std::string & log_group, const std::string & log_stream,
                          const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
-                         std::shared_ptr<LogManagerFactory> factory)
+                         const Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options,
+                         std::shared_ptr<LogServiceFactory> factory)
 {
-  this->log_manager_ = factory->CreateLogManager(log_group, log_stream, config, sdk_options);
+  this->log_service_ = factory->CreateLogService(log_group, log_stream, config, sdk_options, cloudwatch_options);
+}
+
+bool LogNode::checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response) {
+
+  AWS_LOGSTREAM_DEBUG(__func__, "received request " << request);
+
+  if (!this->log_service_) {
+    response.success = false;
+    response.message = "The LogService is not initialized";
+    return true;
+  }
+
+  response.success = this->log_service_->isConnected();
+  response.message = response.success ? "The LogService is connected" : "The LogService is not connected";
+
+  return true;
+}
+
+bool LogNode::start() {
+  bool is_started = true;
+  if (this->log_service_) {
+    is_started &= this->log_service_->start();
+  }
+  is_started &= Service::start();
+  return is_started;
+}
+
+bool LogNode::shutdown() {
+  bool is_shutdown = Service::shutdown();
+  if (this->log_service_) {
+    is_shutdown &= this->log_service_->shutdown();
+  }
+  return is_shutdown;
 }
 
 void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
 {
   if (0 == this->ignore_nodes_.count(log_msg->name)) {
-    if (nullptr == this->log_manager_) {
+    if (nullptr == this->log_service_) {
       AWS_LOG_ERROR(__func__,
                     "Cannot publish CloudWatch logs with NULL CloudWatch LogManager instance.");
       return;
     }
     if (ShouldSendToCloudWatchLogs(log_msg->level)) {
-      this->log_manager_->RecordLog(FormatLogs(log_msg));
+      auto message = FormatLogs(log_msg);
+      this->log_service_->batchData(message);
     }
   }
 }
 
-void LogNode::TriggerLogPublisher(const ros::TimerEvent &) { this->log_manager_->Service(); }
+void LogNode::TriggerLogPublisher(const ros::TimerEvent &) {
+  this->log_service_->publishBatchedData();
+}
 
 bool LogNode::ShouldSendToCloudWatchLogs(const int8_t log_severity_level)
 {

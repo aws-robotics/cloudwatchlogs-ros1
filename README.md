@@ -45,6 +45,27 @@ This node will require the following AWS account IAM role permissions:
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
 
+TODO
+
+Ensure your region is set.
+
+If desired to test credentials intall the aws cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
+
+Test your credentials / setup with the following: aws cloudwatch put-metric-data --namespace "Test Metrics" --metric-data file://metric.json --debug
+
+where metric.json is 
+
+[
+  {
+    "MetricName": "New Posts",
+    "Timestamp": "Thursday, June 6, 2019 10:28:20 AM",
+    "Value": 8.50,
+    "Unit": "Count"
+  }
+]
+
+Note: replace the date with the current date.
+
 ### Binaries
 On Ubuntu you can install the latest version of this package using the following command
 
@@ -90,7 +111,6 @@ _Note: If building the master branch instead of a release branch you may need to
 ## Launch Files
 An example launch file called `sample_application.launch` is provided.
 
-
 ## Usage
 
 ### Run the node
@@ -115,32 +135,31 @@ An example launch file called `sample_application.launch` is provided.
 ## Configuration File and Parameters
 An example configuration file called `sample_configuration.yaml` is provided. When the parameters are absent in the ROS parameter server, default values are used, thus all parameters are optional. See table below for details.
 
-| Parameter Name | Description | Type | Allowed Values |
-| -------------- | ----------- | ---- | -------------- |
-| sub_to_rosout  | Whether to subscribe to *rosout_agg* topic | *bool* | true/false |
-| publish_frequency | Log publishing frequency in seconds | *double* | number |
-| log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account |
-| log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed |
-| topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] |
-| ignore_nodes | A list of  of node names to ignore logs from | *std::vector<std::string>* | ['string', 'string', 'string'] |
-| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL |
-| aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. |
+| Parameter Name | Description | Type | Allowed Values | Default |
+| -------------- | ----------- | ---- | -------------- | ------------ |
+| sub_to_rosout  | Whether to subscribe to *rosout_agg* topic | *bool* | true/false | true |
+| publish_frequency | Log publishing frequency in seconds | *double* | number | 5.0 |
+| log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account | ros_log_group |
+| log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed | ros_log_stream |
+| topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] | `[]` |
+| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL | DEBUG |
+| storage_directory | The location where all offline metrics will be stored | *string* | string | ~/.ros/cwlogs/ |
+| storage_limit | The maximum size of all offline storage files in KB. Once this limit is reached offline logs will start to be deleted oldest first. | *int* | number | 1048576 |
+| aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. | region: us-west-2 |
 
+### Advanced Configuration Parameters
+Most users won't need to touch these parameters, they are useful if you want fine grained control over how your logs are stored offline and uploaded to CloudWatch. 
 
-## Performance and Benchmark Results
-We evaluated the performance of this node by runnning the followning scenario on a Raspberry Pi 3 Model B:
-- Launch a baseline graph containing the talker and listener nodes from the [roscpp_tutorials package](https://wiki.ros.org/roscpp_tutorials), plus two additional nodes that collect CPU and memory usage statistics. Allow the nodes to run for 60 seconds.
-- Launch the Amazon CloudWatch Logs node using the launch file `example.launch` as described above. Allow the nodes to run for 180 seconds.
-- Terminate the Amazon CloudWatch Logs node, and allow the remaining nodes to run for 60 seconds.
-
-The following graph shows the CPU usage during that scenario. The 1 minute average CPU usage starts at 9.25% during the launch of the baseline graph, and stabilizes at 4.5%. When we launch the `cloudwatch_logger` node around second 60 the 1 minute average CPU increases up to a peak of 9.5%. After that initial peak, the CPU lowers to around 5% while the `cloudwatch_logger` node keeps sending the messages sent by the talker node to the AWS CloudWatch Logs service.
-
-![cpu](wiki/images/cpu.svg)
-
-The following graph shows the memory usage during that scenario. We start with a memory usage of 368 MB that increases to a peak of 412 MB (+11.96%) when the `cloudwatch_logger` node starts running, and stabilizes to 394 (+7%) while the node keeps running. The memory usage goes back to 368 MB after stopping the node.
-
-![memory](wiki/images/memory.svg)
-
+| Parameter Name | Description | Type | Default |
+| ------------- | -----------------------------------------------------------| ------------- | ------------ |
+| batch_max_queue_size | The maximum number logs to add to the CloudWatch upload queue before they start to be written to disk | *int* | 1024 |
+| batch_trigger_publish_size | Only publish logs to CloudWatch when there are this many items in the queue. When this is set the publishing of logs on a constant timer is disabled. This must be smaller than batch_max_queue_size | *int* | 64 |
+| file_max_queue_size | The max number of batches in the queue, each of size file_upload_batch_size, when reading and uploading from offline storage files | *int* | 5 |
+| file_upload_batch_size | The size of each batch of logs in the queue, when reading and uploading from offline storage files | *int* | 50 |
+| file_prefix | A prefix to add to each offline storage file so they're easier to identify later | *string* | cwlog |
+| file_extension | The extension for all offline storage files | *string* | .log |
+| maximum_file_size | The maximum size each offline storage file in KB | *int* | 1024 |
+| stream_max_queue_size | The maximum number of batches in the queue to stream to CloudWatch. If this queue is full subsequent batches of logs will be written to disk. | *int* | 3 |
 
 ## Node
 
