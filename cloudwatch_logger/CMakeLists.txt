@@ -40,7 +40,8 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     aws_common
     aws_ros1_common
-    rosgraph_msgs)
+    rosgraph_msgs
+    std_srvs)
 
 ###################################
 ## catkin specific configuration ##
