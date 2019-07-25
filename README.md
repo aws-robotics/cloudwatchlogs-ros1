@@ -45,27 +45,6 @@ This node will require the following AWS account IAM role permissions:
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
 
-TODO
-
-Ensure your region is set.
-
-If desired to test credentials intall the aws cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
-
-Test your credentials / setup with the following: aws cloudwatch put-metric-data --namespace "Test Metrics" --metric-data file://metric.json --debug
-
-where metric.json is 
-
-[
-  {
-    "MetricName": "New Posts",
-    "Timestamp": "Thursday, June 6, 2019 10:28:20 AM",
-    "Value": 8.50,
-    "Unit": "Count"
-  }
-]
-
-Note: replace the date with the current date.
-
 ### Binaries
 On Ubuntu you can install the latest version of this package using the following command
 
@@ -115,8 +94,8 @@ An example launch file called `sample_application.launch` is provided.
 - **With** launch file using parameters in .yaml format (example provided)
   - ROS: `roslaunch cloudwatch_logger sample_application.launch`
 
-- **Without** launch file using your configurations file
-  - ROS: `rosrun cloudwatch_logger cloudwatch_logger config_file:="/path/to/your/config"`
+- **Without** launch file using default values
+  - ROS: `rosrun cloudwatch_logger cloudwatch_logger`
 
 ### Send a test log message
 - `rostopic pub -1 /rosout rosgraph_msgs/Log '{header: auto, level: 2, name: test_log, msg: test_cloudwatch_logger, function: test_logs, line: 1}'`
@@ -151,7 +130,7 @@ Most users won't need to touch these parameters, they are useful if you want fin
 | Parameter Name | Description | Type | Default |
 | ------------- | -----------------------------------------------------------| ------------- | ------------ |
 | batch_max_queue_size | The maximum number logs to add to the CloudWatch upload queue before they start to be written to disk | *int* | 1024 |
-| batch_trigger_publish_size | Only publish logs to CloudWatch when there are this many items in the queue. When this is set the publishing of logs on a constant timer is disabled. This must be smaller than batch_max_queue_size | *int* | 64 |
+| batch_trigger_publish_size | Only publish logs to CloudWatch when there are this many items in the queue. When this is set the publishing of logs on a constant timer is disabled. This must be smaller than batch_max_queue_size. Logs uploaded from offline storage are not affected by this. | *int* | *unset* |
 | file_max_queue_size | The max number of batches in the queue, each of size file_upload_batch_size, when reading and uploading from offline storage files | *int* | 5 |
 | file_upload_batch_size | The size of each batch of logs in the queue, when reading and uploading from offline storage files | *int* | 50 |
 | file_prefix | A prefix to add to each offline storage file so they're easier to identify later | *string* | cwlog |
