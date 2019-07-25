@@ -45,27 +45,6 @@ This node will require the following AWS account IAM role permissions:
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
 
-TODO
-
-Ensure your region is set.
-
-If desired to test credentials intall the aws cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
-
-Test your credentials / setup with the following: aws cloudwatch put-metric-data --namespace "Test Metrics" --metric-data file://metric.json --debug
-
-where metric.json is 
-
-[
-  {
-    "MetricName": "New Posts",
-    "Timestamp": "Thursday, June 6, 2019 10:28:20 AM",
-    "Value": 8.50,
-    "Unit": "Count"
-  }
-]
-
-Note: replace the date with the current date.
-
 ### Binaries
 On Ubuntu you can install the latest version of this package using the following command
 
