@@ -2,8 +2,8 @@
 Changelog for package cloudwatch_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2019-07-24)
+------------------
 * increment version for offline logs feature (`#46 <https://github.com/aws-robotics/cloudwatchlogs-ros1/issues/46>`_)
   Signed-off-by: Miaofei <miaofei@amazon.com>
 * Fixing std_msgs, std_srvs dependency resolution (`#44 <https://github.com/aws-robotics/cloudwatchlogs-ros1/issues/44>`_)
