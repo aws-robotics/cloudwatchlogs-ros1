@@ -2,8 +2,8 @@
 Changelog for package cloudwatch_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.1 (2019-07-26)
+------------------
 * Increment version (`#48 <https://github.com/aws-robotics/cloudwatchlogs-ros1/issues/48>`_)
   * increment version for binary packaging fix
   Signed-off-by: Miaofei <miaofei@amazon.com>
