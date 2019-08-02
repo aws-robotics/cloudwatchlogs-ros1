@@ -1,3 +1,6 @@
+### NOTE: This release branch is no longer maintained and is deprecated. Please consider using the `release-latest` branch for the latest stable sources.
+
+
 # cloudwatch_logger
 
 
