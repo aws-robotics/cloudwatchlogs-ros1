@@ -21,7 +21,6 @@
 
 using namespace Aws::Client;
 using namespace Aws::CloudWatchLogs::Utils;
-using ::testing::_;
 using ::testing::Eq;
 using ::testing::A;
 using ::testing::InSequence;
@@ -100,7 +99,7 @@ TEST_F(LogNodeParamHelperFixture, TestReadLogGroup)
         );
     }
 
-    std::string param = ""; 
+    std::string param; 
     EXPECT_EQ(AwsError::AWS_ERR_FAILURE, ReadLogGroup(param_reader_, param));
     EXPECT_STREQ(kNodeLogGroupNameDefaultValue, param.c_str());
 
@@ -132,7 +131,7 @@ TEST_F(LogNodeParamHelperFixture, TestReadLogStream)
         );
     }
 
-    std::string param = ""; 
+    std::string param; 
     EXPECT_EQ(AwsError::AWS_ERR_FAILURE, ReadLogStream(param_reader_, param));
     EXPECT_STREQ(kNodeLogStreamNameDefaultValue, param.c_str());
 

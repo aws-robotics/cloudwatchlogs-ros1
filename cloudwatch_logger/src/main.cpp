@@ -71,7 +71,7 @@ int main(int argc, char ** argv)
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
   ros::ServiceServer service = nh.advertiseService(kNodeName,
-                                                   &Aws::CloudWatchLogs::Utils::LogNode::checkIfOnline,
+                                                   &Aws::CloudWatchLogs::Utils::LogNode::CheckIfOnline,
                                                    &cloudwatch_logger);
 
   cloudwatch_logger.start();

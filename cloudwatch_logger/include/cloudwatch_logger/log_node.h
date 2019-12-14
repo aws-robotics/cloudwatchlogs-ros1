@@ -45,7 +45,7 @@ public:
   /**
    *  @brief Tears down a AWSCloudWatchLogNode object
    */
-  ~LogNode();
+  ~LogNode() override;
 
   /**
    * @brief Reads creds, region, and SDK option to configure log manager
@@ -59,7 +59,7 @@ public:
   void Initialize(const std::string & log_group, const std::string & log_stream,
                   const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
                   const Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options,
-                  std::shared_ptr<LogServiceFactory> log_service_factory = std::make_shared<LogServiceFactory>());
+                  const std::shared_ptr<LogServiceFactory>& factory = std::make_shared<LogServiceFactory>());
 
   bool start() override;
   bool shutdown() override;
@@ -77,7 +77,7 @@ public:
    *
    * @param timer A ros timer
    */
-  void TriggerLogPublisher(const ros::TimerEvent &);
+  void TriggerLogPublisher(const ros::TimerEvent & /*unused*/);
 
   /**
    * Return a Trigger response detailing the LogService online status.
@@ -86,7 +86,7 @@ public:
    * @param response output response
    * @return true if the request was handled successfully, false otherwise
    */
-  bool checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response);
+  bool CheckIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response);
 
 private:
   bool ShouldSendToCloudWatchLogs(const int8_t log_severity_level);

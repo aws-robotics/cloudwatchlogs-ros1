@@ -66,7 +66,7 @@ constexpr bool kNodeSubscribeToRosoutDefaultValue = true;
  * as returned by \p parameter_reader
  */
 Aws::AwsError ReadPublishFrequency(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   double & publish_frequency);
 
 /**
@@ -77,7 +77,7 @@ Aws::AwsError ReadPublishFrequency(
  * @return an error code that indicates whether the parameter was read successfully or not, 
  * as returned by \p parameter_reader
  */
-Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+Aws::AwsError ReadLogGroup(const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
                            std::string & log_group);
 
 /**
@@ -88,7 +88,7 @@ Aws::AwsError ReadLogGroup(std::shared_ptr<Aws::Client::ParameterReaderInterface
  * @return an error code that indicates whether the parameter was read successfully or not, 
  * as returned by \p parameter_reader
  */
-Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+Aws::AwsError ReadLogStream(const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
                             std::string & log_stream);
 
 /**
@@ -100,7 +100,7 @@ Aws::AwsError ReadLogStream(std::shared_ptr<Aws::Client::ParameterReaderInterfac
  * as returned by \p parameter_reader
  */
 Aws::AwsError ReadSubscribeToRosout(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   bool & subscribe_to_rosout);
 
 /**
@@ -113,7 +113,7 @@ Aws::AwsError ReadSubscribeToRosout(
  * as returned by \p parameter_reader
  */
 Aws::AwsError ReadMinLogVerbosity(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   int8_t & min_log_verbosity);
 
 /**
@@ -130,8 +130,8 @@ Aws::AwsError ReadMinLogVerbosity(
  */
 Aws::AwsError ReadSubscriberList(
   bool subscribe_to_rosout,
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
-  boost::function<void(const rosgraph_msgs::Log::ConstPtr &)> callback,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
+  const boost::function<void(const rosgraph_msgs::Log::ConstPtr &)>& callback,
   ros::NodeHandle & nh,
   std::vector<ros::Subscriber> & subscriptions);
   
@@ -144,7 +144,7 @@ Aws::AwsError ReadSubscriberList(
  * as returned by \p parameter_reader
  */
 Aws::AwsError ReadIgnoreNodesSet(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   std::unordered_set<std::string> & ignore_nodes);
 
 /**
@@ -156,7 +156,7 @@ Aws::AwsError ReadIgnoreNodesSet(
  * as returned by \p parameter_reader
  */
 void ReadCloudWatchOptions(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options);
 
 /**
@@ -168,7 +168,7 @@ void ReadCloudWatchOptions(
  * as returned by \p parameter_reader
  */
 void ReadUploaderOptions(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   Aws::DataFlow::UploaderOptions & uploader_options);
 
 /**
@@ -180,7 +180,7 @@ void ReadUploaderOptions(
  * as returned by \p parameter_reader
  */
 void ReadFileManagerStrategyOptions(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   Aws::FileManagement::FileManagerStrategyOptions & file_manager_strategy_options);
 
 /**
@@ -194,7 +194,7 @@ void ReadFileManagerStrategyOptions(
  * as returned by \p parameter_reader
  */
 void ReadOption(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   const std::string & option_key,
   const std::string & default_value,
   std::string & option_value);
@@ -210,7 +210,7 @@ void ReadOption(
  * as returned by \p parameter_reader
  */
 void ReadOption(
-  std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
   const std::string & option_key,
   const size_t & default_value,
   size_t & option_value);

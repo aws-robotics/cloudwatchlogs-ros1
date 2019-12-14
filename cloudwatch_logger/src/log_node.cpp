@@ -42,23 +42,23 @@ LogNode::~LogNode() { this->log_service_ = nullptr; }
 void LogNode::Initialize(const std::string & log_group, const std::string & log_stream,
                          const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
                          const Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options,
-                         std::shared_ptr<LogServiceFactory> factory)
+                         const std::shared_ptr<LogServiceFactory>& factory)
 {
   this->log_service_ = factory->CreateLogService(log_group, log_stream, config, sdk_options, cloudwatch_options);
 }
 
-bool LogNode::checkIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response) {
+bool LogNode::CheckIfOnline(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response) {
 
   AWS_LOGSTREAM_DEBUG(__func__, "received request " << request);
 
   if (!this->log_service_) {
-    response.success = false;
+    response.success = static_cast<uint8_t>(false);
     response.message = "The LogService is not initialized";
     return true;
   }
 
-  response.success = this->log_service_->isConnected();
-  response.message = response.success ? "The LogService is connected" : "The LogService is not connected";
+  response.success = static_cast<uint8_t>(this->log_service_->isConnected());
+  response.message = response.success != 0u ? "The LogService is connected" : "The LogService is not connected";
 
   return true;
 }
@@ -95,7 +95,7 @@ void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
   }
 }
 
-void LogNode::TriggerLogPublisher(const ros::TimerEvent &) {
+void LogNode::TriggerLogPublisher(const ros::TimerEvent & /*unused*/) {
   this->log_service_->publishBatchedData();
 }
 
@@ -131,8 +131,8 @@ const std::string LogNode::FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_m
   ss << "[node name: " << log_msg->name << "] ";
 
   ss << "[topics: ";
-  std::vector<std::string>::const_iterator it = log_msg->topics.begin();
-  std::vector<std::string>::const_iterator end = log_msg->topics.end();
+  auto it = log_msg->topics.begin();
+  auto end = log_msg->topics.end();
   for (; it != end; ++it) {
     const std::string & topic = *it;
 
