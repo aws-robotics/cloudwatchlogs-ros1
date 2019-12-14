@@ -18,8 +18,7 @@
 #include <aws/core/utils/logging/LogMacros.h>
 #include <cloudwatch_logs_common/cloudwatch_options.h>
 
-
-using namespace Aws::Client;
+using Aws::Client::ParameterPath;
 
 namespace Aws {
 namespace CloudWatchLogs {

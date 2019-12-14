@@ -28,7 +28,9 @@
 #include <std_srvs/Trigger.h>
 #include <std_srvs/Empty.h>
 
-using namespace Aws::CloudWatchLogs::Utils;
+namespace Aws {
+namespace CloudWatchLogs {
+namespace Utils {
 
 LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes) 
     : ignore_nodes_(std::move(ignore_nodes))
@@ -146,3 +148,7 @@ const std::string LogNode::FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_m
 
   return ss.str();
 }
+
+}  // namespace Utils
+}  // namespace CloudWatchLogs
+}  // namespace Aws

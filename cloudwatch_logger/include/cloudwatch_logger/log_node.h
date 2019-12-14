@@ -41,6 +41,8 @@ public:
    * @param ignore_nodes The set of node names to ignore logs from
    */
   explicit LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes);
+  LogNode(const LogNode & other) = delete;
+  LogNode & operator=(const LogNode & other) = delete;
 
   /**
    *  @brief Tears down a AWSCloudWatchLogNode object
