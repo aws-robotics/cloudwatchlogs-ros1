@@ -27,6 +27,7 @@
 
 using namespace Aws::CloudWatchLogs;
 using namespace Aws::CloudWatchLogs::Utils;
+using namespace Aws::FileManagement;
 using ::testing::_;
 using ::testing::AllOf;
 using ::testing::HasSubstr;

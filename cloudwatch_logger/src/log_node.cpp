@@ -28,7 +28,10 @@
 #include <std_srvs/Trigger.h>
 #include <std_srvs/Empty.h>
 
-using namespace Aws::CloudWatchLogs::Utils;
+
+namespace Aws {
+namespace CloudWatchLogs {
+namespace Utils {
 
 LogNode::LogNode(const Options & options)
   : min_log_severity_(options.min_log_severity),
@@ -36,7 +39,7 @@ LogNode::LogNode(const Options & options)
     publish_topic_names_(options.publish_topic_names) {}
 
 LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes)
-  : LogNode(Options{min_log_severity, true, std::move(ignore_nodes)}) {}
+  : LogNode(Options(min_log_severity, true, std::move(ignore_nodes))) {}
 
 LogNode::~LogNode() { this->log_service_ = nullptr; }
 
@@ -96,7 +99,7 @@ void LogNode::RecordLogs(const rosgraph_msgs::Log::ConstPtr & log_msg)
   }
 }
 
-void LogNode::TriggerLogPublisher(const ros::TimerEvent &) {
+void LogNode::TriggerLogPublisher(const ros::TimerEvent & /*unused*/) {
   this->log_service_->publishBatchedData();
 }
 
@@ -149,3 +152,7 @@ const std::string LogNode::FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_m
 
   return ss.str();
 }
+
+}  // namespace Utils
+}  // namespace CloudWatchLogs
+}  // namespace Aws

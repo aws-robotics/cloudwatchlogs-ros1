@@ -34,8 +34,16 @@ class LogNode : public Service
 {
 public:
   struct Options {
-    int8_t min_log_severity;
-    bool publish_topic_names;
+    Options() = default;
+
+    template<class UnorderedSet>
+    Options(int8_t severity, bool publish, UnorderedSet && nodes)
+      : min_log_severity(severity),
+        publish_topic_names(publish),
+        ignore_nodes(std::forward<UnorderedSet>(nodes)) {}
+
+    int8_t min_log_severity = rosgraph_msgs::Log::DEBUG;
+    bool publish_topic_names = true;
     std::unordered_set<std::string> ignore_nodes;
   };
 
@@ -94,7 +102,7 @@ public:
    *
    * @param timer A ros timer
    */
-  void TriggerLogPublisher(const ros::TimerEvent &);
+  void TriggerLogPublisher(const ros::TimerEvent & /*unused*/);
 
   /**
    * Return a Trigger response detailing the LogService online status.
