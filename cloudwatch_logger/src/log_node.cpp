@@ -43,7 +43,7 @@ LogNode::~LogNode() { this->log_service_ = nullptr; }
 void LogNode::Initialize(const std::string & log_group, const std::string & log_stream,
                          const Aws::Client::ClientConfiguration & config, Aws::SDKOptions & sdk_options,
                          const Aws::CloudWatchLogs::CloudWatchOptions & cloudwatch_options,
-                         std::shared_ptr<LogServiceFactory> factory)
+                         const std::shared_ptr<LogServiceFactory>& factory)
 {
   this->log_service_ = factory->CreateLogService(log_group, log_stream, config, sdk_options, cloudwatch_options);
 }
