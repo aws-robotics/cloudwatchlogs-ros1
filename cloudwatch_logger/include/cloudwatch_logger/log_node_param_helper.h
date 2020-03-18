@@ -35,6 +35,7 @@ constexpr char kNodeParamSubscribeToRosoutKey[] = "sub_to_rosout";
 constexpr char kNodeParamLogGroupNameKey[] = "log_group_name";
 constexpr char kNodeParamLogTopicsListKey[] = "topics";
 constexpr char kNodeParamMinLogVerbosityKey[] = "min_log_verbosity";
+constexpr char kNodeParamPublishTopicNames[] = "publish_topic_names";
 constexpr char kNodeParamIgnoreNodesKey[] = "ignore_nodes";
 
 /** Configuration params for Aws::DataFlow::UploaderOptions **/
@@ -51,11 +52,13 @@ constexpr char kNodeParamFileExtension[] = "file_extension";
 constexpr char kNodeParamMaximumFileSize[] = "maximum_file_size";
 constexpr char kNodeParamStorageLimit[] = "storage_limit";
 
+/** Default values for parameters **/
 constexpr char kNodeLogGroupNameDefaultValue[] = "ros_log_group";
 constexpr char kNodeLogStreamNameDefaultValue[] = "ros_log_stream";
 constexpr int8_t kNodeMinLogVerbosityDefaultValue = rosgraph_msgs::Log::DEBUG;
 constexpr double kNodePublishFrequencyDefaultValue = 5.0;
 constexpr bool kNodeSubscribeToRosoutDefaultValue = true;
+constexpr bool kNodePublishTopicNamesDefaultValue = true;
 
 /**
  * Fetch the parameter for the log publishing frequency.
@@ -115,6 +118,19 @@ Aws::AwsError ReadSubscribeToRosout(
 Aws::AwsError ReadMinLogVerbosity(
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,
   int8_t & min_log_verbosity);
+
+/**
+ * Fetch the parameter for whether or not to include topic name information in the log messsages
+ * that are uploaded to AWS CloudWatch Logs.
+ *
+ * @param parameter_reader to retrieve the parameters from.
+ * @param publish_topic_names the parameter is stored here when it is read successfully.
+ * @return an error code that indicates whether the parameter was read successfully or not, 
+ * as returned by \p parameter_reader
+ */
+Aws::AwsError ReadPublishTopicNames(
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
+  bool & publish_topic_names);
 
 /**
  * Fetch the parameter for the list of topics to get logs from, and subscribe \p nh

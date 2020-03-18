@@ -39,8 +39,16 @@ public:
    * @param min_log_severity the minimum log severity level defined in the configuration file
    *                         logs with severity level equal or above get sent to CloudWatch Logs
    * @param ignore_nodes The set of node names to ignore logs from
+   * @param publish_topic_names whether or not to include topic name information in the log messsages
+   *                            that are uploaded to AWS CloudWatch Logs
    */
-  explicit LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes);
+  explicit LogNode(int8_t min_log_severity,
+                   std::unordered_set<std::string> ignore_nodes,
+                   bool publish_topic_names = true);
+
+  LogNode(const LogNode & other) = delete;
+
+  LogNode & operator=(const LogNode & other) = delete;
 
   /**
    *  @brief Tears down a AWSCloudWatchLogNode object
@@ -91,9 +99,11 @@ public:
 private:
   bool ShouldSendToCloudWatchLogs(const int8_t log_severity_level);
   const std::string FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_msg);
+
   std::shared_ptr<Aws::CloudWatchLogs::LogService> log_service_;
   int8_t min_log_severity_;
   std::unordered_set<std::string> ignore_nodes_;
+  bool publish_topic_names_;
 };
 
 }  // namespace Utils

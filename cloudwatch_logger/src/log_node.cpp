@@ -30,12 +30,12 @@
 
 using namespace Aws::CloudWatchLogs::Utils;
 
-LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes) 
-    : ignore_nodes_(std::move(ignore_nodes))
-{
-  this->log_service_ = nullptr;
-  this->min_log_severity_ = min_log_severity;
-}
+LogNode::LogNode(int8_t min_log_severity,
+                 std::unordered_set<std::string> ignore_nodes,
+                 bool publish_topic_names)
+  : min_log_severity_(min_log_severity),
+    ignore_nodes_(std::move(ignore_nodes)),
+    publish_topic_names_(publish_topic_names) {}
 
 LogNode::~LogNode() { this->log_service_ = nullptr; }
 
@@ -130,19 +130,20 @@ const std::string LogNode::FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_m
   }
   ss << "[node name: " << log_msg->name << "] ";
 
-  ss << "[topics: ";
-  std::vector<std::string>::const_iterator it = log_msg->topics.begin();
-  std::vector<std::string>::const_iterator end = log_msg->topics.end();
-  for (; it != end; ++it) {
-    const std::string & topic = *it;
-
-    if (it != log_msg->topics.begin()) {
-      ss << ", ";
+  if (publish_topic_names_) {
+    ss << "[topics: ";
+    auto it = log_msg->topics.begin();
+    auto end = log_msg->topics.end();
+    for (; it != end; ++it) {
+      const std::string & topic = *it;
+      if (it != log_msg->topics.begin()) {
+        ss << ", ";
+      }
+      ss << topic << "] ";
     }
-
-    ss << topic;
   }
-  ss << "] " << log_msg->msg << "\n";
+
+  ss << log_msg->msg << "\n";
 
   return ss.str();
 }

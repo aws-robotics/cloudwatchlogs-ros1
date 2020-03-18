@@ -25,8 +25,6 @@
 
 #include <cloudwatch_logs_common/cloudwatch_options.h>
 
-using namespace Aws::CloudWatchLogs::Utils;
-
 constexpr char kNodeName[] = "cloudwatch_logger";
 
 int main(int argc, char ** argv)
@@ -42,6 +40,7 @@ int main(int argc, char ** argv)
   std::string log_stream;
   bool subscribe_to_rosout;
   int8_t min_log_verbosity;
+  bool publish_topic_names;
   std::vector<ros::Subscriber> subscriptions;
   std::unordered_set<std::string> ignore_nodes;
   Aws::CloudWatchLogs::CloudWatchOptions cloudwatch_options;
@@ -52,14 +51,15 @@ int main(int argc, char ** argv)
     std::make_shared<Aws::Client::Ros1NodeParameterReader>();
 
   // checking configurations to set values or set to default values;
-  ReadPublishFrequency(parameter_reader, publish_frequency);
-  ReadLogGroup(parameter_reader, log_group);
-  ReadLogStream(parameter_reader, log_stream);
-  ReadSubscribeToRosout(parameter_reader, subscribe_to_rosout);
-  ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
-  ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
+  Aws::CloudWatchLogs::Utils::ReadPublishFrequency(parameter_reader, publish_frequency);
+  Aws::CloudWatchLogs::Utils::ReadLogGroup(parameter_reader, log_group);
+  Aws::CloudWatchLogs::Utils::ReadLogStream(parameter_reader, log_stream);
+  Aws::CloudWatchLogs::Utils::ReadSubscribeToRosout(parameter_reader, subscribe_to_rosout);
+  Aws::CloudWatchLogs::Utils::ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
+  Aws::CloudWatchLogs::Utils::ReadPublishTopicNames(parameter_reader, publish_topic_names);
+  Aws::CloudWatchLogs::Utils::ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
 
-  ReadCloudWatchOptions(parameter_reader, cloudwatch_options);
+  Aws::CloudWatchLogs::Utils::ReadCloudWatchOptions(parameter_reader, cloudwatch_options);
 
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);
@@ -67,7 +67,7 @@ int main(int argc, char ** argv)
 
   Aws::SDKOptions sdk_options;
 
-  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes);
+  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes, publish_topic_names);
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
   ros::ServiceServer service = nh.advertiseService(kNodeName,
@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
   };
 
   // subscribe to additional topics, if any
-  ReadSubscriberList(subscribe_to_rosout, parameter_reader, callback, nh, subscriptions);
+  Aws::CloudWatchLogs::Utils::ReadSubscriberList(subscribe_to_rosout, parameter_reader, callback, nh, subscriptions);
   AWS_LOGSTREAM_INFO(__func__, "Initialized " << kNodeName << ".");
 
   bool publish_when_size_reached = cloudwatch_options.uploader_options.batch_trigger_publish_size
