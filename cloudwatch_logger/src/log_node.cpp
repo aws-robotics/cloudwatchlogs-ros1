@@ -139,8 +139,9 @@ const std::string LogNode::FormatLogs(const rosgraph_msgs::Log::ConstPtr & log_m
       if (it != log_msg->topics.begin()) {
         ss << ", ";
       }
-      ss << topic << "] ";
+      ss << topic;
     }
+    ss  << "] ";
   }
 
   ss << log_msg->msg << "\n";
