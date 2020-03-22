@@ -176,7 +176,7 @@ Aws::AwsError ReadPublishTopicNames(
   bool & publish_topic_names)
 {
   Aws::AwsError ret =
-    parameter_reader->ReadParam(ParameterPath(kNodeParamPublishTopicNames), publish_topic_names);
+    parameter_reader->ReadParam(ParameterPath(kNodeParamPublishTopicNamesKey), publish_topic_names);
 
   switch (ret) {
     case Aws::AwsError::AWS_ERR_NOT_FOUND:

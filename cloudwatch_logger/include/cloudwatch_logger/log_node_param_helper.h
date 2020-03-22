@@ -35,7 +35,7 @@ constexpr char kNodeParamSubscribeToRosoutKey[] = "sub_to_rosout";
 constexpr char kNodeParamLogGroupNameKey[] = "log_group_name";
 constexpr char kNodeParamLogTopicsListKey[] = "topics";
 constexpr char kNodeParamMinLogVerbosityKey[] = "min_log_verbosity";
-constexpr char kNodeParamPublishTopicNames[] = "publish_topic_names";
+constexpr char kNodeParamPublishTopicNamesKey[] = "publish_topic_names";
 constexpr char kNodeParamIgnoreNodesKey[] = "ignore_nodes";
 
 /** Configuration params for Aws::DataFlow::UploaderOptions **/
