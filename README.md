@@ -119,7 +119,8 @@ An example configuration file called `sample_configuration.yaml` is provided. Wh
 | log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account | ros_log_group |
 | log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed | ros_log_stream |
 | topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] | `[]` |
-| min_log_verbosity| The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL | DEBUG |
+| min_log_verbosity | The minimum log severity for sending logs selectively to AWS CloudWatch Logs, log messages with a severity lower than `min_log_verbosity` will be ignored | *std::string* | DEBUG/INFO/WARN/ERROR/FATAL | DEBUG |
+| publish_topic_names | Whether or not to include topic name information in the log messsages that are uploaded to AWS CloudWatch Logs | *bool* | true/false | true |
 | storage_directory | The location where all offline metrics will be stored | *string* | string | ~/.ros/cwlogs/ |
 | storage_limit | The maximum size of all offline storage files in KB. Once this limit is reached offline logs will start to be deleted oldest first. | *int* | number | 1048576 |
 | aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. | region: us-west-2 |
