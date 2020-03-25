@@ -108,7 +108,12 @@ protected:
     bool publish_topic_names = true,
     const std::unordered_set<std::string> & ignore_nodes = std::unordered_set<std::string>())
   {
-    return std::make_shared<LogNode>(severity_level, ignore_nodes, publish_topic_names);
+    Aws::CloudWatchLogs::Utils::LogNode::Options logger_options = {
+      severity_level,
+      publish_topic_names,
+      ignore_nodes
+    };
+    return std::make_shared<LogNode>(logger_options);
   }
 
   rosgraph_msgs::Log::ConstPtr message_to_constptr(rosgraph_msgs::Log log_message)

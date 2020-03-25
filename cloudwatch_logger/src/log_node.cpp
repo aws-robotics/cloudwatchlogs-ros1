@@ -30,12 +30,15 @@
 
 using namespace Aws::CloudWatchLogs::Utils;
 
-LogNode::LogNode(int8_t min_log_severity,
-                 std::unordered_set<std::string> ignore_nodes,
-                 bool publish_topic_names)
+LogNode::LogNode(const Options & options)
+  : min_log_severity_(options.min_log_severity),
+    ignore_nodes_(options.ignore_nodes),
+    publish_topic_names_(options.publish_topic_names) {}
+
+LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes)
   : min_log_severity_(min_log_severity),
     ignore_nodes_(std::move(ignore_nodes)),
-    publish_topic_names_(publish_topic_names) {}
+    publish_topic_names_(true) {}
 
 LogNode::~LogNode() { this->log_service_ = nullptr; }
 

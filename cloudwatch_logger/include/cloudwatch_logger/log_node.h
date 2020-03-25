@@ -33,18 +33,27 @@ namespace Utils {
 class LogNode : public Service
 {
 public:
+  struct Options {
+    int8_t min_log_severity;
+    bool publish_topic_names;
+    std::unordered_set<std::string> ignore_nodes;
+  };
+
   /**
-   * @brief Creates a new CloudWatchLogNode
+   * Creates a new CloudWatchLogNode
+   *
+   * @param options an options struct that specifies some behaviors of this CloudWatchLogNode
+   */
+  explicit LogNode(const Options & options);
+
+  /**
+   * @deprecated Creates a new CloudWatchLogNode
    *
    * @param min_log_severity the minimum log severity level defined in the configuration file
    *                         logs with severity level equal or above get sent to CloudWatch Logs
    * @param ignore_nodes The set of node names to ignore logs from
-   * @param publish_topic_names whether or not to include topic name information in the log messsages
-   *                            that are uploaded to AWS CloudWatch Logs
    */
-  explicit LogNode(int8_t min_log_severity,
-                   std::unordered_set<std::string> ignore_nodes,
-                   bool publish_topic_names = true);
+  explicit LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes);
 
   LogNode(const LogNode & other) = delete;
 

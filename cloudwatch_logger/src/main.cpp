@@ -39,10 +39,8 @@ int main(int argc, char ** argv)
   std::string log_group;
   std::string log_stream;
   bool subscribe_to_rosout;
-  int8_t min_log_verbosity;
-  bool publish_topic_names;
-  std::vector<ros::Subscriber> subscriptions;
-  std::unordered_set<std::string> ignore_nodes;
+  Aws::SDKOptions sdk_options;
+  Aws::CloudWatchLogs::Utils::LogNode::Options logger_options;
   Aws::CloudWatchLogs::CloudWatchOptions cloudwatch_options;
 
   ros::NodeHandle nh;
@@ -55,19 +53,16 @@ int main(int argc, char ** argv)
   Aws::CloudWatchLogs::Utils::ReadLogGroup(parameter_reader, log_group);
   Aws::CloudWatchLogs::Utils::ReadLogStream(parameter_reader, log_stream);
   Aws::CloudWatchLogs::Utils::ReadSubscribeToRosout(parameter_reader, subscribe_to_rosout);
-  Aws::CloudWatchLogs::Utils::ReadMinLogVerbosity(parameter_reader, min_log_verbosity);
-  Aws::CloudWatchLogs::Utils::ReadPublishTopicNames(parameter_reader, publish_topic_names);
-  Aws::CloudWatchLogs::Utils::ReadIgnoreNodesSet(parameter_reader, ignore_nodes);
-
+  Aws::CloudWatchLogs::Utils::ReadMinLogVerbosity(parameter_reader, logger_options.min_log_severity);
+  Aws::CloudWatchLogs::Utils::ReadPublishTopicNames(parameter_reader, logger_options.publish_topic_names);
+  Aws::CloudWatchLogs::Utils::ReadIgnoreNodesSet(parameter_reader, logger_options.ignore_nodes);
   Aws::CloudWatchLogs::Utils::ReadCloudWatchOptions(parameter_reader, cloudwatch_options);
 
   // configure aws settings
   Aws::Client::ClientConfigurationProvider client_config_provider(parameter_reader);
   Aws::Client::ClientConfiguration config = client_config_provider.GetClientConfiguration();
 
-  Aws::SDKOptions sdk_options;
-
-  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(min_log_verbosity, ignore_nodes, publish_topic_names);
+  Aws::CloudWatchLogs::Utils::LogNode cloudwatch_logger(logger_options);
   cloudwatch_logger.Initialize(log_group, log_stream, config, sdk_options, cloudwatch_options);
 
   ros::ServiceServer service = nh.advertiseService(kNodeName,
@@ -83,6 +78,7 @@ int main(int argc, char ** argv)
   };
 
   // subscribe to additional topics, if any
+  std::vector<ros::Subscriber> subscriptions;
   Aws::CloudWatchLogs::Utils::ReadSubscriberList(subscribe_to_rosout, parameter_reader, callback, nh, subscriptions);
   AWS_LOGSTREAM_INFO(__func__, "Initialized " << kNodeName << ".");
 
