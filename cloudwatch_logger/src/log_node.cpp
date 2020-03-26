@@ -36,9 +36,7 @@ LogNode::LogNode(const Options & options)
     publish_topic_names_(options.publish_topic_names) {}
 
 LogNode::LogNode(int8_t min_log_severity, std::unordered_set<std::string> ignore_nodes)
-  : min_log_severity_(min_log_severity),
-    ignore_nodes_(std::move(ignore_nodes)),
-    publish_topic_names_(true) {}
+  : LogNode(Options{min_log_severity, true, std::move(ignore_nodes)}) {}
 
 LogNode::~LogNode() { this->log_service_ = nullptr; }
 
