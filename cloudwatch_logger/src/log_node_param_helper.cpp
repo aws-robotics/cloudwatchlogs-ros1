@@ -171,6 +171,37 @@ Aws::AwsError ReadMinLogVerbosity(
   return ret;
 }
 
+Aws::AwsError ReadPublishTopicNames(
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
+  bool & publish_topic_names)
+{
+  Aws::AwsError ret =
+    parameter_reader->ReadParam(ParameterPath(kNodeParamPublishTopicNamesKey), publish_topic_names);
+
+  switch (ret) {
+    case Aws::AwsError::AWS_ERR_NOT_FOUND:
+      publish_topic_names = kNodePublishTopicNamesDefaultValue;
+      AWS_LOGSTREAM_INFO(
+      __func__,
+      "Whether to publish topic names to Cloudwatch Logs configuration not found, setting to default value: "
+        << kNodePublishTopicNamesDefaultValue);
+      break;
+    case Aws::AwsError::AWS_ERR_OK:
+      AWS_LOGSTREAM_INFO(
+      __func__, "Whether to publish topic names to Cloudwatch Logs is set to: " << publish_topic_names);
+      break;
+    default:
+      publish_topic_names = kNodePublishTopicNamesDefaultValue;
+      AWS_LOGSTREAM_ERROR(
+        __func__,
+        "Error " << ret 
+        << "retrieving parameter for whether to publish topic names to Cloudwatch Logs" 
+        << ", setting to default value: " << kNodePublishTopicNamesDefaultValue);
+  }
+
+  return ret;
+}
+
 Aws::AwsError ReadSubscriberList(
   const bool subscribe_to_rosout,
   std::shared_ptr<Aws::Client::ParameterReaderInterface> parameter_reader,

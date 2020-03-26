@@ -103,10 +103,17 @@ protected:
     log_service_factory = std::make_shared<LogServiceFactoryMock>();
   }
 
-  std::shared_ptr<LogNode> build_test_subject(int8_t severity_level = rosgraph_msgs::Log::DEBUG,
-      std::unordered_set<std::string> ignore_nodes = std::unordered_set<std::string>())
+  std::shared_ptr<LogNode> build_test_subject(
+    int8_t severity_level = rosgraph_msgs::Log::DEBUG,
+    bool publish_topic_names = true,
+    const std::unordered_set<std::string> & ignore_nodes = std::unordered_set<std::string>())
   {
-    return std::make_shared<LogNode>(severity_level, ignore_nodes);
+    Aws::CloudWatchLogs::Utils::LogNode::Options logger_options = {
+      severity_level,
+      publish_topic_names,
+      ignore_nodes
+    };
+    return std::make_shared<LogNode>(logger_options);
   }
 
   rosgraph_msgs::Log::ConstPtr message_to_constptr(rosgraph_msgs::Log log_message)
@@ -190,6 +197,26 @@ TEST_F(LogNodeFixture, TestRecordLogSevBelowMinSeverity)
   test_subject->RecordLogs(message_to_constptr(log_message_));
 }
 
+TEST_F(LogNodeFixture, TestDontPublishTopicNames)
+{
+  std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::DEBUG, false);
+  initialize_log_node(test_subject);
+
+  const std::string log_name_reference_str = std::string("[node name: ") + log_message_.name + "]";
+  const std::string log_topics_reference_str = "[topics: ]";
+
+  EXPECT_CALL(*log_service,
+    batchData(AllOf(
+      HasSubstr("DEBUG"),
+      HasSubstr(log_message_.msg),
+      HasSubstr(log_name_reference_str),
+      Not(HasSubstr(log_topics_reference_str))
+      )))
+    .WillOnce(Return(true));
+
+  test_subject->RecordLogs(message_to_constptr(log_message_));
+}
+
 TEST_F(LogNodeFixture, TestRecordLogSevEqGtMinSeverity)
 {
   std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::ERROR);
@@ -218,7 +245,7 @@ TEST_F(LogNodeFixture, TestRecordLogSevEqGtMinSeverity)
 
 TEST_F(LogNodeFixture, TestRecordLogTopicsOk)
 {
-  std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::DEBUG);
+  std::shared_ptr<LogNode> test_subject = build_test_subject();
 
   initialize_log_node(test_subject);
 
@@ -280,7 +307,7 @@ TEST_F(LogNodeFixture, TestRecordLogIgnoreList)
 {
   std::unordered_set<std::string> ignore_nodes;
   ignore_nodes.emplace(log_message_.name);
-  std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::DEBUG, ignore_nodes);
+  std::shared_ptr<LogNode> test_subject = build_test_subject(rosgraph_msgs::Log::DEBUG, true, ignore_nodes);
 
   initialize_log_node(test_subject);
 

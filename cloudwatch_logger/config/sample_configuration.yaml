@@ -34,6 +34,10 @@ ignore_nodes: ["/cloudwatch_logger", "/cloudwatch_metrics_collector"]
 # default value is: DEBUG == logs of all log verbosity levels get sent to CloudWatch Logs
 min_log_verbosity: DEBUG
 
+# whether or not to include topic name information in the log messsages that are uploaded to cloudwatch
+# default value is: true
+publish_topic_names: true
+
 # The absolute path to a folder that all offline logs will be stored in
 storage_directory: "~/.ros/cwlogs/"
 
