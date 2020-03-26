@@ -21,7 +21,6 @@
 
 using namespace Aws::Client;
 using namespace Aws::CloudWatchLogs::Utils;
-using ::testing::_;
 using ::testing::Eq;
 using ::testing::A;
 using ::testing::InSequence;
