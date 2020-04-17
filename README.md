@@ -74,16 +74,21 @@ _Note: If building the master branch instead of a release branch you may need to
 
 - Build the packages
 
-        cd ~/ros-workspace && colcon build
+```sh
+cd ~/ros-workspace && colcon build
+```
 
 - Configure ROS library Path
 
-        source ~/ros-workspace/install/setup.bash
+```sh
+source ~/ros-workspace/install/setup.bash
+```
 
 - Build and run the unit tests
 
-        colcon test --packages-select cloudwatch_logs_common && colcon test-result --all
-
+```sh
+colcon test --packages-select cloudwatch_logger && colcon test-result --all
+```
 
 ## Launch Files
 An example launch file called `sample_application.launch` is provided.
