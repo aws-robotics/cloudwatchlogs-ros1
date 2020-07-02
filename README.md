@@ -8,10 +8,6 @@ The **`cloudwatch_logger`** node wraps the [aws-sdk-c++] in a ROS service API.
 
 **Amazon CloudWatch Logs Summary**: AWS CloudWatch Logs can monitor applications and systems using log data. You can create alarms in CloudWatch and receive notifications of particular API activity as captured by CloudTrail and use the notification to perform troubleshooting. By default, logs are kept indefinitely and never expire. You can adjust the retention policy for each log group, keeping the indefinite retention, or choosing a retention periods between 10 years and one day. AWS CloudWatch Logs stores your log data in highly durable storage.
 
-**Features in Active Development**:
-- Offline caching: now, a batch of logs will be dropped if the node fails to send them to AWS CloudWatch Logs. We will enable offline caching and try to save logs.
-- Send logs to different log groups/streams: now, one node will send logs to one log stream within one log group. We will enable a node to send logs to different log groups/streams.
-
 **Keywords**: ROS Application logs, System logs, AWS CloudWatch Logs service
 
 ### License
