@@ -51,6 +51,7 @@ constexpr char kNodeParamStorageDirectory[] = "storage_directory";
 constexpr char kNodeParamFileExtension[] = "file_extension";
 constexpr char kNodeParamMaximumFileSize[] = "maximum_file_size";
 constexpr char kNodeParamStorageLimit[] = "storage_limit";
+constexpr char kNodeParamDeleteStaleData[] = "delete_stale_data";
 
 /** Default values for parameters **/
 constexpr char kNodeLogGroupNameDefaultValue[] = "ros_log_group";

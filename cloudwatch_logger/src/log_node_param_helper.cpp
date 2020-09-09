@@ -335,6 +335,12 @@ void ReadFileManagerStrategyOptions(
     kNodeParamStorageLimit,
     Aws::FileManagement::kDefaultFileManagerStrategyOptions.storage_limit_in_kb,
     file_manager_strategy_options.storage_limit_in_kb);
+
+  ReadOption(
+    parameter_reader,
+    kNodeParamDeleteStaleData,
+    Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data,
+    file_manager_strategy_options.delete_stale_data);
 }
 
 void ReadOption(
