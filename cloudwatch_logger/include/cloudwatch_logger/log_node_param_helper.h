@@ -51,6 +51,7 @@ constexpr char kNodeParamStorageDirectory[] = "storage_directory";
 constexpr char kNodeParamFileExtension[] = "file_extension";
 constexpr char kNodeParamMaximumFileSize[] = "maximum_file_size";
 constexpr char kNodeParamStorageLimit[] = "storage_limit";
+constexpr char kNodeParamDeleteStaleData[] = "delete_stale_data";
 
 /** Default values for parameters **/
 constexpr char kNodeLogGroupNameDefaultValue[] = "ros_log_group";
@@ -230,6 +231,22 @@ void ReadOption(
   const std::string & option_key,
   const size_t & default_value,
   size_t & option_value);
+
+/**
+ * Fetch a single size_t option
+ *
+ * @param parameter_reader to retrieve the parameters from
+ * @param option_key the parameter key to read
+ * @param default_value a default value if the parameter doesn't exist or is unreadble
+ * @param option_value the size_t value for this option
+ * @return an error code that indicates whether the parameter was read successfully or not,
+ * as returned by \p parameter_reader
+ */
+void ReadOption(
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
+  const std::string & option_key,
+  const bool & default_value,
+  bool & option_value);
 
 }  // namespace Utils
 }  // namespace CloudWatchLogs

@@ -44,6 +44,10 @@ storage_directory: "~/.ros/cwlogs/"
 # The maximum size of all files in offline storage in KB
 storage_limit: 1048576
 
+# whether or not to automatically delete log data > 14 days old
+#default value is: false
+delete_stale_data: false
+
 # This is the AWS Client Configuration used by the AWS service client in the Node. If given the node will load the
 # provided configuration when initializing the client.
 aws_client_configuration:
