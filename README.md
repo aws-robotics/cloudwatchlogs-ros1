@@ -124,7 +124,7 @@ An example configuration file called `sample_configuration.yaml` is provided. Wh
 | publish_topic_names | Whether or not to include topic name information in the log messsages that are uploaded to AWS CloudWatch Logs | *bool* | true/false | true |
 | storage_directory | The location where all offline metrics will be stored | *string* | string | ~/.ros/cwlogs/ |
 | storage_limit | The maximum size of all offline storage files in KB. Once this limit is reached offline logs will start to be deleted oldest first. | *int* | number | 1048576 |
-| delete_stale_data | Whether or not to delete log batch data that are over 14 days old, which are rejected by AWS PutLogEvents. | *bool* | true/false | false |
+| delete_stale_data | Whether or not to delete log batch data that are over 14 days old, which are rejected by [AWS PutLogEvents](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html). | *bool* | true/false | false |
 | aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. | region: us-west-2 |
 
 ### Advanced Configuration Parameters

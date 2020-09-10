@@ -389,6 +389,29 @@ void ReadOption(
   }
 }
 
+void ReadOption(
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameter_reader,
+  const std::string & option_key,
+  const bool & default_value,
+  bool & option_value)
+{
+  Aws::AwsError ret = parameter_reader->ReadParam(ParameterPath(option_key), option_value);
+  switch (ret) {
+    case Aws::AwsError::AWS_ERR_NOT_FOUND:
+      option_value = default_value;
+      AWS_LOGSTREAM_INFO(__func__,
+                         option_key << " parameter not found, setting to default value: " << default_value);
+      break;
+    case Aws::AwsError::AWS_ERR_OK:
+      AWS_LOGSTREAM_INFO(__func__, option_key << " is set to: " << option_value);
+      break;
+    default:
+      option_value = default_value;
+      AWS_LOGSTREAM_ERROR(__func__,
+                          "Error " << ret << " retrieving option " << option_key << ", setting to default value: " << default_value);
+  }
+}
+
 }  // namespace Utils
 }  // namespace CloudWatchLogs
 }  // namespace Aws

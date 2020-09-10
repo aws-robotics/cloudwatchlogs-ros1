@@ -319,6 +319,86 @@ TEST_F(LogNodeParamHelperFixture, TestReadIgnoreNodesSet)
     EXPECT_EQ(AwsError::AWS_ERR_OK, ReadIgnoreNodesSet(param_reader_, param));
     EXPECT_EQ(1, param.count("String1"));
 }
+/**
+ * FileManagerStrategyOptions options defined with delete_stale_data set to true.
+ * First ReadParam call fails, therefore we expect options_.delete_stale_data set true->false.
+ * Second ReadParam call suceeds, therefore we expect options_.delete_stale_data set false->true.
+ * Third ReadParam call not found, therefore we expect options_.delete_stale_data set true->false.
+ */
+TEST_F(LogNodeParamHelperFixture, Test_Delete_Stale_Data_True)
+{
+  {
+    InSequence read_param_seq;
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(Return(AwsError::AWS_ERR_FAILURE));
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(
+      DoAll(SetArgReferee<1>(true), Return(AwsError::AWS_ERR_OK))
+    );
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(Return(AwsError::AWS_ERR_NOT_FOUND));
+  }
+
+  Aws::FileManagement::FileManagerStrategyOptions options_{"test", "log_tests/", ".log", 1024*1024, 1024*1024, true};
+  ASSERT_TRUE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_FALSE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_TRUE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_FALSE(options_.delete_stale_data);
+}
+/**
+ * FileManagerStrategyOptions options defined with delete_stale_data not defined.
+ * We expect that when delete_stale_data is not defined that it will default to false.
+ * First ReadParam call suceeds, therefore we expect options_.delete_stale_data set false->true.
+ * Second ReadParam call fails, therefore we expect options_.delete_stale_data set true->false.
+ * Third ReadParam call suceeds, therefore we expect options_.delete_stale_data set false->true.
+ * Forth ReadParam call not found, therefore we expect options_.delete_stale_data set true->false.
+ */
+TEST_F(LogNodeParamHelperFixture, Test_Delete_Stale_Data_Not_Defined)
+{
+  {
+    InSequence read_param_seq;
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(
+      DoAll(SetArgReferee<1>(true), Return(AwsError::AWS_ERR_OK))
+    );
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(Return(AwsError::AWS_ERR_FAILURE));
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(
+      DoAll(SetArgReferee<1>(true), Return(AwsError::AWS_ERR_OK))
+    );
+
+    EXPECT_CALL(*param_reader_, ReadParam(Eq(ParameterPath(kNodeParamDeleteStaleData)), A<bool &>()))
+    .WillOnce(Return(AwsError::AWS_ERR_NOT_FOUND));
+  }
+
+  Aws::FileManagement::FileManagerStrategyOptions options_{"test", "log_tests/", ".log", 1024*1024, 1024*1024};
+  ASSERT_FALSE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_TRUE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_FALSE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_TRUE(options_.delete_stale_data);
+
+  ReadOption(param_reader_, kNodeParamDeleteStaleData, Aws::FileManagement::kDefaultFileManagerStrategyOptions.delete_stale_data, options_.delete_stale_data);
+  ASSERT_FALSE(options_.delete_stale_data);
+}
 
 int main(int argc, char ** argv)
 {
