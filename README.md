@@ -49,23 +49,23 @@ On Ubuntu you can install the latest version of this package using the following
 
 ### Building from Source
 
-To build from source you'll need to create a new workspace, clone and checkout the latest release branch of this repository, install all the dependencies, and compile. If you need the latest development features you can clone from the `master` branch instead of the latest release branch. While we guarantee the release branches are stable, __the `master` should be considered to have an unstable build__ due to ongoing development. 
+To build from source you'll need to create a new workspace, clone and checkout the latest release branch of this repository, install all the dependencies, and compile. If you need the latest development features you can clone from the `master` branch instead of the latest release branch. While we guarantee the release branches are stable, __the `master` should be considered to have an unstable build__ due to ongoing development.
 
 - Create a ROS workspace and a source directory
 
         mkdir -p ~/ros-workspace/src
 
-- Clone the package into the source directory . 
+- Clone the package into the source directory .
 
         cd ~/ros-workspace/src
         git clone https://github.com/aws-robotics/cloudwatchlogs-ros1.git -b release-latest
 
 - Install dependencies
 
-        cd ~/ros-workspace 
+        cd ~/ros-workspace
         sudo apt-get update && rosdep update
         rosdep install --from-paths src --ignore-src -r -y
-        
+
 _Note: If building the master branch instead of a release branch you may need to also checkout and build the master branches of the packages this package depends on._
 
 - Build the packages
@@ -116,7 +116,7 @@ An example configuration file called `sample_configuration.yaml` is provided. Wh
 | Parameter Name | Description | Type | Allowed Values | Default |
 | -------------- | ----------- | ---- | -------------- | ------------ |
 | sub_to_rosout  | Whether to subscribe to *rosout_agg* topic | *bool* | true/false | true |
-| publish_frequency | Log publishing frequency in seconds | *double* | number | 5.0 |
+| publish_frequency | Log publishing period in seconds (e.g. 5 will publish once every 5 seconds) | *double* | number | 5.0 |
 | log_group_name | AWS CloudWatch log group name | *std::string* | 'string'<br/>*note*: Log group names must be unique within a region foran AWS account | ros_log_group |
 | log_stream_name | AWS CloudWatch log stream name | *std::string* | 'string'<br/>*note*: The : (colon) and * (asterisk) characters are not allowed | ros_log_stream |
 | topics | A list of topics to get logs from (excluding `rosout_agg`) | *std::vector<std::string>* | ['string', 'string', 'string'] | `[]` |
@@ -127,7 +127,7 @@ An example configuration file called `sample_configuration.yaml` is provided. Wh
 | aws_client_configuration | AWS region configuration | *std::string* | *region*: "us-west-2"/"us-east-1"/"us-east-2"/etc. | region: us-west-2 |
 
 ### Advanced Configuration Parameters
-Most users won't need to touch these parameters, they are useful if you want fine grained control over how your logs are stored offline and uploaded to CloudWatch. 
+Most users won't need to touch these parameters, they are useful if you want fine grained control over how your logs are stored offline and uploaded to CloudWatch.
 
 | Parameter Name | Description | Type | Default |
 | ------------- | -----------------------------------------------------------| ------------- | ------------ |
