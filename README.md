@@ -42,6 +42,7 @@ You will need to create an AWS Account and configure the credentials to be able 
 
 This node will require the following AWS account IAM role permissions:
 - `logs:PutLogEvents`
+- `logs:DescribeLogGroups`
 - `logs:DescribeLogStreams`
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
