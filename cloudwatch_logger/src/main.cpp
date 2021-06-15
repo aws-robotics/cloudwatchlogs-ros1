@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+#include <aws/core/Aws.h>
 #include <aws/core/utils/logging/LogMacros.h>
 #include <aws_common/sdk_utils/client_configuration_provider.h>
 #include <cloudwatch_logger/log_node.h>
@@ -29,6 +30,8 @@ constexpr char kNodeName[] = "cloudwatch_logger";
 
 int main(int argc, char ** argv)
 {
+  Aws::SDKOptions options;
+  Aws::InitAPI(options);
   Aws::Utils::Logging::InitializeAWSLogging(
     Aws::MakeShared<Aws::Utils::Logging::AWSROSLogger>(kNodeName));
   ros::init(argc, argv, kNodeName);
@@ -100,6 +103,7 @@ int main(int argc, char ** argv)
   cloudwatch_logger.shutdown();
   Aws::Utils::Logging::ShutdownAWSLogging();
   ros::shutdown();
+  Aws::ShutdownAPI(options);
 
   return 0;
 }
