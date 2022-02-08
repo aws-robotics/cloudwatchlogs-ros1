@@ -15,22 +15,12 @@ The source code is released under an [Apache 2.0].
 
 **Author**: AWS RoboMaker<br/>
 **Affiliation**: [Amazon Web Services (AWS)]<br/>
-**Maintainer**: AWS RoboMaker, ros-contributions@amazon.com
+
+RoboMaker cloud extensions rely on third-party software licensed under open-source licenses and are provided for demonstration purposes only. Incorporation or use of RoboMaker cloud extensions in connection with your production workloads or commercial product(s) or devices may affect your legal rights or obligations under the applicable open-source licenses. License information for this repository can be found [here](https://github.com/aws-robotics/cloudwatchlogs-ros1/blob/master/LICENSE). AWS does not provide support for this cloud extension. You are solely responsible for how you configure, deploy, and maintain this cloud extension in your workloads or commercial product(s) or devices.
 
 ### Supported ROS Distributions
 - Kinetic
 - Melodic
-
-### Build status
-* GitHub Action Status
-     * master: [![Build & Test](https://github.com/aws-robotics/cloudwatchlogs-ros1/workflows/Build%20&%20Test/badge.svg?branch=master&event=schedule)](https://github.com/aws-robotics/cloudwatchlogs-ros1/actions?query=workflow%3A"Build+%26+Test"+event%3Aschedule)
-     * release-latest: [![Build & Test release-latest](https://github.com/aws-robotics/cloudwatchlogs-ros1/workflows/Build%20&%20Test%20release-latest/badge.svg?branch=master&event=schedule)](https://github.com/aws-robotics/cloudwatchlogs-ros1/actions?query=workflow%3A"Build+%26+Test+release-latest"+event%3Aschedule)
-
-
-* ROS build farm:
-    * ROS Kinetic @ u16.04 Xenial [![Build Status](http://build.ros.org/job/Kbin_uX64__cloudwatch_logger__ubuntu_xenial_amd64__binary/badge/icon)](http://build.ros.org/job/Kbin_uX64__cloudwatch_logger__ubuntu_xenial_amd64__binary)
-    * ROS Melodic @ u18.04 Bionic [![Build Status](http://build.ros.org/job/Mbin_uB64__cloudwatch_logger__ubuntu_bionic_amd64__binary/badge/icon)](http://build.ros.org/job/Mbin_uB64__cloudwatch_logger__ubuntu_bionic_amd64__binary)
-
 
 ## Installation
 
@@ -43,12 +33,6 @@ This node will require the following AWS account IAM role permissions:
 - `logs:DescribeLogStreams`
 - `logs:CreateLogStream`
 - `logs:CreateLogGroup`
-
-### Binaries
-On Ubuntu you can install the latest version of this package using the following command
-
-        sudo apt-get update
-        sudo apt-get install -y ros-$ROS_DISTRO-cloudwatch-logger
 
 ### Building from Source
 
@@ -163,13 +147,6 @@ None
 
 #### Services
 None
-
-
-## Bugs & Feature Requests
-Please contact the team directly if you would like to request a feature.
-
-Please report bugs in [Issue Tracker].
-
 
 [Amazon Web Services (AWS)]: https://aws.amazon.com/
 [Apache 2.0]: https://aws.amazon.com/apache-2-0/
